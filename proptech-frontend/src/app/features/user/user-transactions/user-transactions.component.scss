@@ -1,0 +1,300 @@
+// user-transactions.component.scss
+
+// Biến màu sắc
+$primary-color: #2196f3;
+$primary-dark: #1976d2;
+$accent-color: #ff4081;
+$text-color: #333;
+$text-light: #757575;
+$background-light: #f5f7fa;
+$white: #ffffff;
+$border-color: #eee;
+$error-color: #f44336;
+$success-color: #4caf50;
+$warning-color: #ff9800;
+
+// Container chính
+.transactions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Roboto", sans-serif;
+}
+
+// Header
+.transactions-header {
+  position: relative;
+  margin-bottom: 60px;
+}
+
+.banner {
+  height: 100px;
+  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 50%, #1976d2 100%);
+  border-radius: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.main-title {
+  margin-bottom: 15px;
+  color: $white;
+  font-size: 24px;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+  padding: 15px;
+}
+
+// Loading container
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+
+  p {
+    margin-top: 16px;
+    color: $text-light;
+  }
+}
+
+// Stats cards
+.stats-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stats-card {
+  flex: 1;
+  min-width: 180px;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.stats-icon {
+  width: 48px;
+  height: 48px;
+  font-size: 36px;
+  margin-right: 16px;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.sales-icon {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+
+  &.payments-icon {
+    color: $success-color;
+    background-color: rgba($success-color, 0.1);
+  }
+
+  &.rentals-icon {
+    color: $accent-color;
+    background-color: rgba($accent-color, 0.1);
+  }
+}
+
+.stats-text {
+  flex: 1;
+
+  .stats-title {
+    margin: 0;
+    color: $text-light;
+    font-size: 14px;
+  }
+
+  .stats-value {
+    margin: 4px 0 0;
+    font-size: 28px;
+    font-weight: 500;
+    color: $text-color;
+  }
+}
+
+// Action bar
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 280px;
+}
+
+.refresh-button {
+  min-width: 120px;
+}
+
+// Transactions table
+.transactions-table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: $white;
+}
+
+.transactions-table {
+  width: 100%;
+}
+
+.transaction-icon {
+  border-radius: 50%;
+  padding: 4px;
+
+  &.sale-icon {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+
+  &.payment-icon {
+    color: $success-color;
+    background-color: rgba($success-color, 0.1);
+  }
+
+  &.rental-icon {
+    color: $accent-color;
+    background-color: rgba($accent-color, 0.1);
+  }
+}
+
+.amount-cell {
+  font-weight: 500;
+}
+
+.actions-cell {
+  width: 60px;
+  text-align: right;
+}
+
+.status-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  text-transform: uppercase;
+
+  &.status-success {
+    background-color: rgba($success-color, 0.1);
+    color: $success-color;
+  }
+
+  &.status-warning {
+    background-color: rgba($warning-color, 0.1);
+    color: $warning-color;
+  }
+
+  &.status-error {
+    background-color: rgba($error-color, 0.1);
+    color: $error-color;
+  }
+
+  &.status-accent {
+    background-color: rgba($accent-color, 0.1);
+    color: $accent-color;
+  }
+
+  &.status-default {
+    background-color: rgba($text-light, 0.1);
+    color: $text-light;
+  }
+}
+
+.not-applicable {
+  color: $text-light;
+  font-style: italic;
+}
+
+.transaction-row {
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba($primary-color, 0.04);
+  }
+}
+
+.no-data-cell {
+  padding: 40px !important;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: $text-light;
+
+  mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 960px) {
+  .stats-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .stats-card {
+    flex-basis: calc(50% - 8px);
+  }
+}
+
+@media (max-width: 600px) {
+  .transactions-table {
+    .mat-column-property,
+    .mat-column-counterparty {
+      display: none;
+    }
+  }
+
+  .stats-card {
+    flex-basis: 100%;
+  }
+
+  .action-bar {
+    flex-direction: column;
+
+    .search-field {
+      width: 100%;
+    }
+
+    .refresh-button {
+      width: 100%;
+    }
+  }
+
+  .status-chip {
+    padding: 3px 8px;
+    font-size: 11px;
+  }
+}

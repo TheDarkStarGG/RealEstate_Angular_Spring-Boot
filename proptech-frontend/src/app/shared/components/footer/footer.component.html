@@ -1,0 +1,108 @@
+<footer class="footer-container">
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3 class="mat-h2">PropTech</h3>
+          <p class="mat-body-1">
+            Tìm kiếm bất động sản mơ ước của bạn với nền tảng công nghệ bất động
+            sản hiện đại.
+          </p>
+          <div class="social-links">
+            <a
+              mat-icon-button
+              href="https://facebook.com"
+              target="_blank"
+              aria-label="Facebook"
+            >
+              <mat-icon>facebook</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              href="https://twitter.com"
+              target="_blank"
+              aria-label="Twitter"
+            >
+              <mat-icon>twitter</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              href="https://instagram.com"
+              target="_blank"
+              aria-label="Instagram"
+            >
+              <mat-icon>instagram</mat-icon>
+            </a>
+            <a
+              mat-icon-button
+              href="https://linkedin.com"
+              target="_blank"
+              aria-label="LinkedIn"
+            >
+              <mat-icon>linkedin</mat-icon>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <h3 class="mat-h3">Liên Kết Nhanh</h3>
+          <mat-nav-list dense>
+            <a mat-list-item routerLink="/">
+              <mat-icon matListItemIcon>home</mat-icon>
+              Trang Chủ
+            </a>
+            <a mat-list-item routerLink="/listings">
+              <mat-icon matListItemIcon>apartment</mat-icon>
+              Bất Động Sản
+            </a>
+            <a mat-list-item routerLink="/listings/search">
+              <mat-icon matListItemIcon>search</mat-icon>
+              Tìm Kiếm
+            </a>
+            <a mat-list-item routerLink="/auth/login">
+              <mat-icon matListItemIcon>login</mat-icon>
+              Đăng Nhập
+            </a>
+            <a mat-list-item routerLink="/auth/register">
+              <mat-icon matListItemIcon>person_add</mat-icon>
+              Đăng Ký
+            </a>
+          </mat-nav-list>
+        </div>
+
+        <div class="footer-contact">
+          <h3 class="mat-h3">Liên Hệ</h3>
+          <address>
+            <p class="mat-body-1 contact-item">
+              <mat-icon>location_on</mat-icon>
+              123 Đường Bất Động Sản<br />
+              Thành Phố Hồ Chí Minh, HCM 70000
+            </p>
+            <p class="mat-body-1 contact-item">
+              <mat-icon>email</mat-icon>
+              info&#64;proptech.com
+            </p>
+            <p class="mat-body-1 contact-item">
+              <mat-icon>phone</mat-icon>
+              (028) 3456-7890
+            </p>
+          </address>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="footer-copyright">
+    <div class="container">
+      <p class="mat-body-2">
+        &copy; {{ currentYear }} PropTech. Tất cả các quyền được bảo lưu.
+      </p>
+      <div class="footer-legal-links">
+        <a mat-button routerLink="/terms">Điều Khoản Sử Dụng</a>
+        <a mat-button routerLink="/privacy">Chính Sách Bảo Mật</a>
+      </div>
+    </div>
+  </div>
+</footer>

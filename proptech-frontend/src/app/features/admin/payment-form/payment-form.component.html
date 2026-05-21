@@ -1,0 +1,152 @@
+<h2 mat-dialog-title>
+  {{ isNew ? "Tạo Thanh Toán Mới" : "Chỉnh Sửa Thanh Toán" }}
+</h2>
+
+<form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="payment-form-content">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Loại Thanh Toán</mat-label>
+        <mat-select formControlName="paymentType" required>
+          <mat-option *ngFor="let type of paymentTypes" [value]="type.value">
+            {{ type.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="paymentForm.get('paymentType')?.hasError('required')">
+          Loại thanh toán là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Người Dùng</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="user"
+          [matAutocomplete]="auto"
+          placeholder="Nhập để tìm kiếm người dùng"
+          required
+        />
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayUser">
+          <mat-option *ngFor="let user of filteredUsers | async" [value]="user">
+            {{ user.fullName }} ({{ user.email }})
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint>Nhập ít nhất 2 ký tự để tìm kiếm</mat-hint>
+        <mat-error *ngIf="paymentForm.get('user')?.hasError('required')">
+          Người dùng là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Số Tiền</mat-label>
+        <input
+          type="number"
+          matInput
+          formControlName="amount"
+          min="0.01"
+          step="0.01"
+          required
+        />
+        <span matPrefix>$&nbsp;</span>
+        <mat-error *ngIf="paymentForm.get('amount')?.hasError('required')">
+          Số tiền là bắt buộc
+        </mat-error>
+        <mat-error *ngIf="paymentForm.get('amount')?.hasError('min')">
+          Số tiền phải lớn hơn không
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Hoa Hồng</mat-label>
+        <input
+          type="number"
+          matInput
+          formControlName="commission"
+          min="0"
+          step="0.01"
+        />
+        <span matPrefix>$&nbsp;</span>
+        <mat-error *ngIf="paymentForm.get('commission')?.hasError('min')">
+          Hoa hồng không thể âm
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Mã Tham Chiếu</mat-label>
+        <input type="text" matInput formControlName="referenceId" required />
+        <mat-error *ngIf="paymentForm.get('referenceId')?.hasError('required')">
+          Mã tham chiếu là bắt buộc
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Phương Thức Thanh Toán</mat-label>
+        <mat-select formControlName="paymentMethod" required>
+          <mat-option value="CREDIT_CARD">Thẻ Tín Dụng</mat-option>
+          <mat-option value="BANK_TRANSFER">Chuyển Khoản Ngân Hàng</mat-option>
+          <mat-option value="PAYPAL">PayPal</mat-option>
+          <mat-option value="CASH">Tiền Mặt</mat-option>
+          <mat-option value="CHECK">Séc</mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="paymentForm.get('paymentMethod')?.hasError('required')"
+        >
+          Phương thức thanh toán là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row" *ngIf="!isNew">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Trạng Thái</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option
+            *ngFor="let status of paymentStatuses"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="paymentForm.get('status')?.hasError('required')">
+          Trạng thái là bắt buộc
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Mã Giao Dịch</mat-label>
+        <input type="text" matInput formControlName="transactionId" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ghi Chú</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close type="button">Hủy</button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="paymentForm.invalid || loading"
+    >
+      <mat-spinner
+        *ngIf="loading"
+        diameter="20"
+        class="spinner-in-button"
+      ></mat-spinner>
+      <span *ngIf="!loading">{{ isNew ? "Tạo" : "Cập Nhật" }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

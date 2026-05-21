@@ -1,0 +1,175 @@
+<div class="appointments-container">
+  <div class="appointments-header">
+    <div class="banner"></div>
+    <h2 class="main-title">Lịch Hẹn Của Tôi</h2>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner color="accent" diameter="40"></mat-spinner>
+    <p>Đang tải lịch hẹn...</p>
+  </div>
+
+  <!-- Main content -->
+  <div *ngIf="!isLoading" class="appointments-content">
+    <!-- Stats card -->
+    <mat-card class="stats-card">
+      <mat-icon class="stats-icon">event</mat-icon>
+      <div class="stats-text">
+        <p class="stats-title">Tổng số lịch hẹn</p>
+        <h3 class="stats-value">{{ totalAppointments }}</h3>
+      </div>
+    </mat-card>
+
+    <!-- Filter and action area -->
+    <div class="action-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Tìm kiếm lịch hẹn</mat-label>
+        <input
+          matInput
+          [formControl]="filterControl"
+          placeholder="Nhập từ khóa..."
+        />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="refresh-button"
+        (click)="refreshAppointments()"
+      >
+        <mat-icon>refresh</mat-icon> Làm mới
+      </button>
+    </div>
+
+    <!-- Table of appointments -->
+    <div class="appointments-table-container mat-elevation-z2">
+      <table
+        mat-table
+        [dataSource]="appointments"
+        matSort
+        class="appointments-table"
+      >
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ngày</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.formattedDate }}
+          </td>
+        </ng-container>
+
+        <!-- Time Column -->
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef>Giờ</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.formattedTime }}
+          </td>
+        </ng-container>
+
+        <!-- Duration Column -->
+        <ng-container matColumnDef="duration">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Thời lượng</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{ appointment.formattedDuration }}
+          </td>
+        </ng-container>
+
+        <!-- Property Column -->
+        <ng-container matColumnDef="property">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Bất động sản
+          </th>
+          <td mat-cell *matCellDef="let appointment">
+            <a
+              *ngIf="appointment.listing"
+              [routerLink]="['/listings', appointment.listing.id]"
+              class="property-link"
+            >
+              {{
+                appointment.listing.title ||
+                  "Bất động sản #" + appointment.listing.id
+              }}
+            </a>
+            <span *ngIf="!appointment.listing" class="not-available"
+              >Không có thông tin</span
+            >
+          </td>
+        </ng-container>
+
+        <!-- Realtor Column -->
+        <ng-container matColumnDef="realtor">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Môi giới</th>
+          <td mat-cell *matCellDef="let appointment">
+            {{
+              appointment.realtor?.fullName ||
+                "Môi giới #" + appointment.realtor?.id ||
+                "Không có thông tin"
+            }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Trạng thái</th>
+          <td mat-cell *matCellDef="let appointment">
+            <span class="status-chip" [ngClass]="appointment.statusClass">
+              {{ appointment.statusText }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let appointment" class="actions-cell">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="cancelAppointment(appointment)"
+              matTooltip="Hủy lịch hẹn"
+              *ngIf="
+                appointment.status === 'REQUESTED' ||
+                appointment.status === 'CONFIRMED'
+              "
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="appointment-row"
+        ></tr>
+
+        <!-- Row shown when no data matches the filter -->
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell no-data-cell"
+            [attr.colspan]="displayedColumns.length"
+          >
+            <div class="no-data-content">
+              <mat-icon>event_busy</mat-icon>
+              <p *ngIf="appointments.data.length === 0">
+                Bạn chưa có lịch hẹn nào
+              </p>
+              <p *ngIf="appointments.data.length > 0">
+                Không tìm thấy lịch hẹn phù hợp
+              </p>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25]"
+        showFirstLastButtons
+        aria-label="Chọn trang lịch hẹn"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>
+......

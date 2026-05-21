@@ -1,0 +1,295 @@
+// Khai báo biến màu
+$primary: #f06292; // Pink màu chính
+$white: #ffffff;
+$black: #333333;
+$blue: #1976d2; // Màu cho nút đăng ký
+$light-gray: #f5f5f5;
+$medium-gray: #e0e0e0;
+$border-color: #eeeeee;
+$header-height: 64px;
+$mobile-header-height: 56px;
+
+// Container
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+// Header styles
+.app-header {
+  height: $header-height;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+  background-color: $white;
+  color: $black;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+  }
+
+  // Logo
+  .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: $black;
+
+    .brand-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Main navigation
+  .main-nav {
+    display: flex;
+    margin-left: 24px;
+
+    a {
+      margin: 0 4px;
+      font-weight: 500;
+      color: $black;
+      position: relative;
+      padding: 20px 16px;
+      text-decoration: none;
+
+      mat-icon {
+        margin-right: 4px;
+        vertical-align: middle;
+      }
+
+      &.active-link {
+        color: $primary;
+        border-bottom: 3px solid $primary;
+      }
+
+      &:hover {
+        background-color: $light-gray;
+      }
+    }
+  }
+
+  // Auth buttons
+  .auth-buttons {
+    display: flex;
+    align-items: center;
+
+    .login-btn {
+      margin-right: 12px;
+      color: $blue;
+      border: 1px solid $blue;
+      background-color: $white;
+
+      &:hover {
+        background-color: rgba($blue, 0.05);
+      }
+    }
+
+    .register-btn {
+      background-color: $blue;
+      color: $white;
+
+      &:hover {
+        background-color: darken($blue, 10%);
+      }
+
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+
+    // User menu
+    .user-menu-button {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      color: $black;
+
+      .user-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        color: $blue;
+      }
+
+      .user-name {
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 4px;
+      }
+    }
+  }
+
+  // Mobile menu button
+  .mobile-menu-button {
+    display: none;
+    color: $black;
+  }
+}
+
+// Mobile navigation drawer
+.mobile-nav-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.open {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100vh;
+  background-color: $white;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+
+  &.open {
+    right: 0;
+  }
+
+  .mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background-color: $primary;
+    color: $white;
+
+    .mobile-brand {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+  }
+
+  .mobile-auth-buttons {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+
+    .mobile-login-btn {
+      width: 100%;
+      color: $blue;
+      border: 1px solid $blue;
+      background-color: $white;
+
+      &:hover {
+        background-color: rgba($blue, 0.05);
+      }
+    }
+
+    .mobile-register-btn {
+      width: 100%;
+      background-color: $blue;
+      color: $white;
+
+      &:hover {
+        background-color: darken($blue, 10%);
+      }
+    }
+  }
+
+  .active-mobile-link {
+    background-color: rgba($primary, 0.1);
+    color: $primary;
+    font-weight: 500;
+
+    mat-icon {
+      color: $primary;
+    }
+  }
+}
+
+// Style for user dropdown items
+::ng-deep .user-dropdown {
+  .mat-menu-item {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Media queries
+@media (max-width: 1024px) {
+  .app-header {
+    .main-nav {
+      a {
+        padding: 0 8px;
+
+        mat-icon {
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .auth-buttons {
+      .user-menu-button {
+        .user-name {
+          max-width: 120px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    height: $mobile-header-height;
+
+    .main-nav {
+      display: none;
+    }
+
+    .auth-buttons {
+      .login-btn,
+      .register-btn {
+        display: none;
+      }
+
+      .user-menu-button {
+        .user-name {
+          display: none;
+        }
+      }
+    }
+
+    .mobile-menu-button {
+      display: flex;
+    }
+  }
+
+  .no-scroll {
+    overflow: hidden;
+  }
+}

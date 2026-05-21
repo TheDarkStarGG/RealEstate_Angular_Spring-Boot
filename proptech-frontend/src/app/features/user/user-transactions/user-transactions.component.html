@@ -1,0 +1,183 @@
+<div class="transactions-container">
+  <div class="transactions-header">
+    <div class="banner"></div>
+    <h2 class="main-title">Lịch Sử Giao Dịch</h2>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner color="accent" diameter="40"></mat-spinner>
+    <p>Đang tải giao dịch...</p>
+  </div>
+
+  <!-- Main content -->
+  <div *ngIf="!isLoading" class="transactions-content">
+    <!-- Stats cards -->
+    <div class="stats-container">
+      <mat-card class="stats-card">
+        <mat-icon class="stats-icon sales-icon">home</mat-icon>
+        <div class="stats-text">
+          <p class="stats-title">Mua bán</p>
+          <h3 class="stats-value">{{ salesCount }}</h3>
+        </div>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-icon class="stats-icon payments-icon">payments</mat-icon>
+        <div class="stats-text">
+          <p class="stats-title">Thanh toán</p>
+          <h3 class="stats-value">{{ paymentsCount }}</h3>
+        </div>
+      </mat-card>
+
+      <mat-card class="stats-card">
+        <mat-icon class="stats-icon rentals-icon">apartment</mat-icon>
+        <div class="stats-text">
+          <p class="stats-title">Thuê</p>
+          <h3 class="stats-value">{{ rentalsCount }}</h3>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Filter and action area -->
+    <div class="action-bar">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Tìm kiếm giao dịch</mat-label>
+        <input
+          matInput
+          [formControl]="filterControl"
+          placeholder="Nhập từ khóa..."
+        />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        class="refresh-button"
+        (click)="refreshTransactions()"
+      >
+        <mat-icon>refresh</mat-icon> Làm mới
+      </button>
+    </div>
+
+    <!-- Table of transactions -->
+    <div class="transactions-table-container mat-elevation-z2">
+      <table
+        mat-table
+        [dataSource]="transactions"
+        matSort
+        class="transactions-table"
+      >
+        <!-- Icon Column -->
+        <ng-container matColumnDef="icon">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let transaction">
+            <mat-icon class="transaction-icon {{ transaction.type }}-icon">{{
+              transaction.icon
+            }}</mat-icon>
+          </td>
+        </ng-container>
+
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ngày</th>
+          <td mat-cell *matCellDef="let transaction">
+            {{ formatDate(transaction.date) }}
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Mô tả</th>
+          <td mat-cell *matCellDef="let transaction">
+            {{ transaction.description }}
+          </td>
+        </ng-container>
+
+        <!-- Property Column -->
+        <ng-container matColumnDef="property">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            Bất động sản
+          </th>
+          <td mat-cell *matCellDef="let transaction">
+            <span *ngIf="transaction.property">{{ transaction.property }}</span>
+            <span *ngIf="!transaction.property" class="not-applicable"
+              >N/A</span
+            >
+          </td>
+        </ng-container>
+
+        <!-- Counterparty Column -->
+        <ng-container matColumnDef="counterparty">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Đối tác</th>
+          <td mat-cell *matCellDef="let transaction">
+            {{ transaction.counterparty }}
+          </td>
+        </ng-container>
+
+        <!-- Amount Column -->
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Số tiền</th>
+          <td mat-cell *matCellDef="let transaction" class="amount-cell">
+            {{ formatCurrency(transaction.amount) }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Trạng thái</th>
+          <td mat-cell *matCellDef="let transaction">
+            <span
+              class="status-chip"
+              [ngClass]="getStatusClass(transaction.statusColor)"
+            >
+              {{ transaction.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let transaction" class="actions-cell">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewDetails(transaction)"
+              matTooltip="Xem chi tiết"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="transaction-row"
+        ></tr>
+
+        <!-- Row shown when no data matches the filter -->
+        <tr class="mat-row" *matNoDataRow>
+          <td
+            class="mat-cell no-data-cell"
+            [attr.colspan]="displayedColumns.length"
+          >
+            <div class="no-data-content">
+              <mat-icon>search_off</mat-icon>
+              <p>Không tìm thấy giao dịch phù hợp</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        showFirstLastButtons
+        aria-label="Chọn trang giao dịch"
+      ></mat-paginator>
+    </div>
+  </div>
+</div>

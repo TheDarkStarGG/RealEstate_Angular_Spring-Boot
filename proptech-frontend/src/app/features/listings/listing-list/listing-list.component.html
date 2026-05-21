@@ -1,0 +1,150 @@
+<div class="property-filter-container">
+  <div class="header-section">
+    <div class="d-flex align-items-center">
+      <button class="filter-toggle-btn" (click)="toggleFilters()">
+        <mat-icon>filter_list</mat-icon>
+        <span>Bộ lọc</span>
+      </button>
+      <h1 class="page-title">Bất Động Sản Hiện Có</h1>
+    </div>
+
+    <div class="sort-control">
+      <label>Sắp xếp theo</label>
+      <mat-select
+        [(ngModel)]="sortBy"
+        (selectionChange)="sortListings()"
+        panelClass="sort-dropdown"
+      >
+        <mat-option value="createdAt,desc">Mới nhất trước</mat-option>
+        <mat-option value="price,asc">Giá (Thấp đến Cao)</mat-option>
+        <mat-option value="price,desc">Giá (Cao đến Thấp)</mat-option>
+      </mat-select>
+    </div>
+  </div>
+
+  <div class="filter-section" *ngIf="showFilters">
+    <form [formGroup]="filterForm" (ngSubmit)="filterListings()">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Bất động sản để</label>
+          <mat-select formControlName="listingType" placeholder="Tất cả">
+            <mat-option value="">Tất cả</mat-option>
+            <mat-option value="SALE">Bán</mat-option>
+            <mat-option value="RENT">Thuê</mat-option>
+          </mat-select>
+        </div>
+
+        <div class="filter-group">
+          <label>Loại bất động sản</label>
+          <mat-select formControlName="propertyType" placeholder="Tất cả">
+            <mat-option value="">Tất cả</mat-option>
+            <mat-option value="HOUSE">Nhà</mat-option>
+            <mat-option value="APARTMENT">Căn Hộ</mat-option>
+            <mat-option value="CONDO">Chung Cư</mat-option>
+            <mat-option value="OFFICE">Văn Phòng</mat-option>
+            <mat-option value="LAND">Đất</mat-option>
+          </mat-select>
+        </div>
+
+        <div class="filter-group">
+          <label>Thành phố</label>
+          <input
+            type="text"
+            formControlName="city"
+            placeholder="Nhập thành phố"
+          />
+        </div>
+
+        <div class="price-filter">
+          <label>Khoảng giá</label>
+          <div class="price-inputs">
+            <div class="input-with-prefix">
+              <span class="prefix">$</span>
+              <input
+                type="number"
+                formControlName="minPrice"
+                placeholder="Thấp nhất"
+              />
+            </div>
+            <span class="price-separator">đến</span>
+            <div class="input-with-prefix">
+              <span class="prefix">$</span>
+              <input
+                type="number"
+                formControlName="maxPrice"
+                placeholder="Cao nhất"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-actions">
+        <button class="clear-btn" type="button" (click)="clearAllFilters()">
+          Xóa Tất Cả
+        </button>
+        <button class="apply-btn" type="submit">Áp Dụng Bộ Lọc</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Nhãn bộ lọc đang hoạt động -->
+  <div class="active-filters" *ngIf="hasActiveFilters()">
+    <div class="filter-chip" *ngIf="filterForm.get('listingType')?.value">
+      {{ getListingTypeLabel(filterForm.get("listingType")?.value) }}
+      <span class="close-icon" (click)="clearFilter('listingType')">×</span>
+    </div>
+    <div class="filter-chip" *ngIf="filterForm.get('propertyType')?.value">
+      {{ getPropertyTypeLabel(filterForm.get("propertyType")?.value) }}
+      <span class="close-icon" (click)="clearFilter('propertyType')">×</span>
+    </div>
+    <div class="filter-chip" *ngIf="filterForm.get('city')?.value">
+      {{ filterForm.get("city")?.value }}
+      <span class="close-icon" (click)="clearFilter('city')">×</span>
+    </div>
+    <div
+      class="filter-chip"
+      *ngIf="
+        filterForm.get('minPrice')?.value || filterForm.get('maxPrice')?.value
+      "
+    >
+      Giá: {{ getPriceRangeLabel() }}
+      <span class="close-icon" (click)="clearPriceFilters()">×</span>
+    </div>
+  </div>
+  <!-- Thêm phần này sau container bộ lọc -->
+  <!-- Lưới danh sách bất động sản -->
+  <div class="listings-container" *ngIf="!loading && listings.length > 0">
+    <div class="listings-grid">
+      <app-listing-card *ngFor="let listing of listings" [listing]="listing">
+      </app-listing-card>
+    </div>
+
+    <!-- Phân trang -->
+    <mat-paginator
+      [length]="totalItems"
+      [pageSize]="pageSize"
+      [pageIndex]="currentPage"
+      [pageSizeOptions]="[6, 12, 24]"
+      (page)="onPageEvent($event)"
+      aria-label="Chọn trang"
+    >
+    </mat-paginator>
+  </div>
+
+  <!-- Biểu tượng đang tải -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Đang tải bất động sản...</p>
+  </div>
+
+  <!-- Thông báo không có kết quả -->
+  <div class="no-results" *ngIf="!loading && listings.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <h3>Không tìm thấy bất động sản nào</h3>
+    <p>Hãy điều chỉnh bộ lọc để xem nhiều kết quả hơn</p>
+    <button mat-flat-button color="primary" (click)="clearAllFilters()">
+      Xóa Tất Cả Bộ Lọc
+    </button>
+  </div>
+</div>

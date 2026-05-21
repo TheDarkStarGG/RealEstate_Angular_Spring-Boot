@@ -1,0 +1,122 @@
+.sale-form-content {
+  padding: 8px;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spinner-in-button {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+// Override Material styles to show currency prefix properly
+.mat-mdc-form-field-prefix {
+  top: 0 !important;
+}
+
+// Add some space between the dialog title and content
+h2.mat-dialog-title {
+  margin-bottom: 16px;
+  color: #673ab7;
+  font-weight: 500;
+}
+/* Thêm CSS này vào file sale-form.component.scss */
+
+.sale-form-content {
+  padding: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-row {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+/* Thêm CSS này vào file sale-form.component.scss */
+
+.sale-form-content {
+  padding: 16px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.form-row {
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-field {
+  flex: 1;
+}
+
+::ng-deep .mat-mdc-form-field-hint {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.spinner-in-button {
+  margin-right: 8px;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: transparent;
+}
+
+/* Đảm bảo mat-hint hiển thị */
+::ng-deep .mat-mdc-form-field-hint-wrapper {
+  display: flex !important;
+}
+.form-field {
+  flex: 1;
+}
+
+::ng-deep .mat-mdc-form-field-hint {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.spinner-in-button {
+  margin-right: 8px;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background-color: transparent;
+}
+
+/* Đảm bảo mat-hint hiển thị */
+::ng-deep .mat-mdc-form-field-hint-wrapper {
+  display: flex !important;
+}
+// Style the dialog actions
+mat-dialog-actions {
+  padding: 12px 0;
+}

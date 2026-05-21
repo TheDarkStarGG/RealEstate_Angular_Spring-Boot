@@ -1,0 +1,293 @@
+<div class="dashboard-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Sidebar -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Quản Trị</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/admin/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Tổng Quan</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/users"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>people</mat-icon>
+          <span>Người Dùng</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/realtors"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>badge</mat-icon>
+          <span>Môi Giới</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/listings"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Bất Động Sản</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Giao Dịch Mua</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Giao Dịch Thuê</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/payments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>credit_card</mat-icon>
+          <span>Thanh Toán</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main content -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>Tổng Quan</h1>
+          <span class="toolbar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="timeMenu">
+            <mat-icon>calendar_today</mat-icon>
+            Tuần này
+          </button>
+          <mat-menu #timeMenu="matMenu">
+            <button mat-menu-item>Hôm nay</button>
+            <button mat-menu-item>Tuần này</button>
+            <button mat-menu-item>Tháng này</button>
+            <button mat-menu-item>Năm nay</button>
+          </mat-menu>
+          <button mat-button [matMenuTriggerFor]="exportMenu">
+            <mat-icon>save_alt</mat-icon>
+            Xuất file
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item>Xuất ra PDF</button>
+            <button mat-menu-item>Xuất ra Excel</button>
+            <button mat-menu-item>In</button>
+          </mat-menu>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <mat-card appearance="outlined" class="stats-card primary-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Tổng người dùng</p>
+                  <p class="stat-value">{{ stats.users }}</p>
+                </div>
+                <mat-icon class="stat-icon">people</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card success-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Tổng môi giới</p>
+                  <p class="stat-value">{{ stats.realtors }}</p>
+                </div>
+                <mat-icon class="stat-icon">badge</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card info-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Bất động sản</p>
+                  <p class="stat-value">{{ stats.listings }}</p>
+                </div>
+                <mat-icon class="stat-icon">house</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card warning-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Giao dịch</p>
+                  <p class="stat-value">{{ stats.sales + stats.rentals }}</p>
+                </div>
+                <mat-icon class="stat-icon">attach_money</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Chart Row -->
+        <div class="charts-container">
+          <mat-card appearance="outlined" class="chart-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>trending_up</mat-icon>
+                  <span>Tổng quan giao dịch theo tháng</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <canvas id="salesChart" height="300"></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="chart-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>pie_chart</mat-icon>
+                  <span>Phân loại bất động sản</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <canvas id="propertyTypeChart" height="250"></canvas>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Recent Activities & Quick Actions -->
+        <div class="bottom-container">
+          <mat-card appearance="outlined" class="activities-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>timeline</mat-icon>
+                  <span>Hoạt động gần đây</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="activities-content">
+              <mat-list>
+                <mat-list-item *ngFor="let activity of recentActivities">
+                  <div class="activity-item">
+                    <div
+                      class="activity-icon"
+                      [ngClass]="activity.icon.split(' ')[1]"
+                    >
+                      <mat-icon>{{ mapIconClass(activity.icon) }}</mat-icon>
+                    </div>
+                    <div class="activity-details">
+                      <h3 class="activity-title">{{ activity.title }}</h3>
+                      <p class="activity-description">
+                        {{ activity.description }}
+                      </p>
+                      <p class="activity-time">{{ activity.time }}</p>
+                    </div>
+                  </div>
+                </mat-list-item>
+              </mat-list>
+
+              <div class="view-all" *ngIf="recentActivities.length > 0">
+                <a
+                  mat-stroked-button
+                  color="primary"
+                  routerLink="/admin/activities"
+                >
+                  Xem tất cả hoạt động
+                </a>
+              </div>
+
+              <div *ngIf="recentActivities.length === 0">
+                <mat-card appearance="outlined" class="empty-card">
+                  <mat-card-content>
+                    <p>Không có hoạt động gần đây để hiển thị.</p>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="quick-actions-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>bolt</mat-icon>
+                  <span>Thao tác nhanh</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="quick-actions-list">
+                <a
+                  mat-stroked-button
+                  routerLink="/admin/users/create"
+                  class="action-button"
+                >
+                  <mat-icon>person_add</mat-icon>
+                  <span>Thêm môi giới mới</span>
+                </a>
+                <a
+                  mat-stroked-button
+                  routerLink="/listings/create"
+                  class="action-button"
+                >
+                  <mat-icon>add_home</mat-icon>
+                  <span>Tạo bất động sản mới</span>
+                </a>
+                <a
+                  mat-stroked-button
+                  routerLink="/admin/users"
+                  class="action-button"
+                >
+                  <mat-icon>manage_accounts</mat-icon>
+                  <span>Quản lý người dùng</span>
+                </a>
+                <a
+                  mat-stroked-button
+                  routerLink="/admin/payments"
+                  class="action-button"
+                >
+                  <mat-icon>payments</mat-icon>
+                  <span>Xử lý thanh toán</span>
+                </a>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

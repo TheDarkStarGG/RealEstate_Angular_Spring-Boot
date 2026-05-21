@@ -1,0 +1,367 @@
+<div class="admin-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Sidebar -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Quản Trị</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/admin/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Tổng Quan</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/users"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>people</mat-icon>
+          <span>Người Dùng</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/realtors"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>badge</mat-icon>
+          <span>Môi Giới</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/listings"
+          routerLinkActive="active-link"
+          class="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Bất Động Sản</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Bán Hàng</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Cho Thuê</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/payments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>credit_card</mat-icon>
+          <span>Thanh Toán</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main content -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>
+            {{
+              isEditMode
+                ? "Chỉnh Sửa Tin Bất Động Sản"
+                : "Tạo Tin Bất Động Sản Mới"
+            }}
+          </h1>
+          <span class="toolbar-spacer"></span>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Original listing form content -->
+        <div class="mat-container">
+          <mat-card class="listing-form-card">
+            <mat-card-content>
+              <form [formGroup]="listingForm" (ngSubmit)="onSubmit()">
+                <mat-error *ngIf="errorMessage" class="error-alert">
+                  <mat-icon>error</mat-icon> {{ errorMessage }}
+                </mat-error>
+
+                <!-- Basic Information Section -->
+                <div class="section-container">
+                  <h2 class="section-title">Thông Tin Cơ Bản</h2>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Tiêu Đề Bất Động Sản</mat-label>
+                      <input
+                        matInput
+                        formControlName="title"
+                        placeholder="VD: Nhà 3 Phòng Ngủ Rộng Rãi Có Vườn"
+                      />
+                      <mat-error
+                        *ngIf="submitted && f['title'].errors?.['required']"
+                      >
+                        Tiêu đề là bắt buộc
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Giá</mat-label>
+                      <span matPrefix>$&nbsp;</span>
+                      <input matInput type="number" formControlName="price" />
+                      <mat-error
+                        *ngIf="submitted && f['price'].errors?.['required']"
+                      >
+                        Giá là bắt buộc
+                      </mat-error>
+                      <mat-error
+                        *ngIf="submitted && f['price'].errors?.['min']"
+                      >
+                        Giá phải lớn hơn 0
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Loại Tin</mat-label>
+                      <mat-select formControlName="listingType">
+                        <mat-option value="">Chọn Loại</mat-option>
+                        <mat-option value="SALE">Bán</mat-option>
+                        <mat-option value="RENT">Cho Thuê</mat-option>
+                      </mat-select>
+                      <mat-error
+                        *ngIf="submitted && f['listingType'].errors?.['required']"
+                      >
+                        Loại tin là bắt buộc
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Loại Bất Động Sản</mat-label>
+                      <mat-select formControlName="propertyType">
+                        <mat-option value="">Chọn Loại Bất Động Sản</mat-option>
+                        <mat-option value="HOUSE">Nhà</mat-option>
+                        <mat-option value="APARTMENT">Căn Hộ</mat-option>
+                        <mat-option value="CONDO">Chung Cư</mat-option>
+                        <mat-option value="OFFICE">Văn Phòng</mat-option>
+                        <mat-option value="LAND">Đất</mat-option>
+                        <mat-option value="OTHER">Khác</mat-option>
+                      </mat-select>
+                      <mat-error
+                        *ngIf="submitted && f['propertyType'].errors?.['required']"
+                      >
+                        Loại bất động sản là bắt buộc
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="section-container">
+                  <h2 class="section-title">Mô Tả</h2>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Mô Tả Bất Động Sản</mat-label>
+                    <textarea
+                      matInput
+                      formControlName="description"
+                      rows="4"
+                      placeholder="Cung cấp mô tả chi tiết về bất động sản..."
+                    ></textarea>
+                  </mat-form-field>
+                </div>
+
+                <!-- Property Details Section -->
+                <div class="section-container">
+                  <h2 class="section-title">Chi Tiết Bất Động Sản</h2>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Phòng Ngủ</mat-label>
+                      <input
+                        matInput
+                        type="number"
+                        formControlName="bedrooms"
+                        min="0"
+                      />
+                      <mat-icon matSuffix>hotel</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Phòng Tắm</mat-label>
+                      <input
+                        matInput
+                        type="number"
+                        formControlName="bathrooms"
+                        min="0"
+                      />
+                      <mat-icon matSuffix>bathtub</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Diện Tích (m²)</mat-label>
+                      <input
+                        matInput
+                        type="number"
+                        formControlName="area"
+                        min="0"
+                      />
+                      <mat-icon matSuffix>square_foot</mat-icon>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Location Section -->
+                <div class="section-container">
+                  <h2 class="section-title">Vị Trí</h2>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Địa Chỉ</mat-label>
+                    <input
+                      matInput
+                      formControlName="address"
+                      placeholder="Địa chỉ đường phố"
+                    />
+                    <mat-icon matSuffix>location_on</mat-icon>
+                    <mat-error
+                      *ngIf="submitted && f['address'].errors?.['required']"
+                    >
+                      Địa chỉ là bắt buộc
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Thành Phố</mat-label>
+                      <input matInput formControlName="city" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Tỉnh/Thành</mat-label>
+                      <input matInput formControlName="state" />
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Mã Bưu Chính</mat-label>
+                      <input matInput formControlName="zipCode" />
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Images Section -->
+                <div class="section-container">
+                  <h2 class="section-title">Hình Ảnh</h2>
+
+                  <div formArrayName="imageUrls" class="image-urls-container">
+                    <div
+                      *ngFor="let control of imageUrlsControls; let i = index"
+                      class="image-url-row"
+                    >
+                      <mat-form-field
+                        appearance="outline"
+                        class="image-url-field"
+                      >
+                        <mat-label>URL Hình Ảnh</mat-label>
+                        <input
+                          matInput
+                          [formControl]="control"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                        <mat-icon matSuffix>image</mat-icon>
+                      </mat-form-field>
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        type="button"
+                        (click)="removeImageUrl(i)"
+                        [disabled]="imageUrlsFormArray.length <= 1"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    mat-stroked-button
+                    color="primary"
+                    type="button"
+                    (click)="addImageUrl()"
+                    class="add-img-btn"
+                  >
+                    <mat-icon>add</mat-icon> Thêm URL Hình Ảnh
+                  </button>
+
+                  <mat-hint class="image-hint">
+                    Thêm các URL đến hình ảnh của bất động sản. Để có kết quả
+                    tốt nhất, hãy sử dụng hình ảnh có hướng ngang.
+                  </mat-hint>
+                </div>
+
+                <!-- Active Status - Only visible for admins -->
+                <div class="section-container" *ngIf="isAdmin">
+                  <h2 class="section-title">Trạng Thái</h2>
+                  <mat-slide-toggle
+                    formControlName="active"
+                    color="primary"
+                    class="status-toggle"
+                  >
+                    Đánh dấu tin là đang hoạt động (hiển thị cho người dùng)
+                  </mat-slide-toggle>
+                  <mat-hint class="status-hint">
+                    Tin đang hoạt động sẽ được hiển thị ngay lập tức cho người
+                    dùng trên trang web công khai.
+                  </mat-hint>
+                </div>
+
+                <!-- Information message for realtors -->
+                <div class="section-container info-message" *ngIf="!isAdmin">
+                  <mat-icon color="primary">info</mat-icon>
+                  <span>
+                    Tin của bạn sẽ được quản trị viên xem xét trước khi hiển thị
+                    cho người dùng.
+                  </span>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="submitting"
+                  >
+                    <mat-spinner diameter="20" *ngIf="submitting"></mat-spinner>
+                    <span *ngIf="!submitting">{{
+                      isEditMode ? "Cập Nhật Tin" : "Tạo Tin"
+                    }}</span>
+                  </button>
+                  <button mat-button type="button" (click)="cancel()">
+                    Hủy
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

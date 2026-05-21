@@ -1,0 +1,217 @@
+// Variables
+$primary: #3f51b5;
+$accent: #ff4081;
+$warn: #f44336;
+$success: #4caf50;
+$white: #ffffff;
+$light-gray: #f5f5f5;
+$medium-gray: #e0e0e0;
+$dark-gray: #757575;
+$card-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+// Main Container
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 40px 20px;
+  background-color: $light-gray;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(63, 81, 181, 0.05),
+    rgba(255, 64, 129, 0.05)
+  );
+}
+
+// Card Container for centering
+.register-card-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Register Card
+.register-card {
+  box-shadow: $card-shadow;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: $white;
+  padding: 0;
+  margin-bottom: 20px;
+
+  .register-header {
+    background-color: $primary;
+    color: $white;
+    padding: 20px 24px;
+    text-align: left;
+
+    .register-title {
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      font-weight: 500;
+    }
+
+    .register-subtitle {
+      font-size: 16px;
+      margin: 0;
+      opacity: 0.9;
+    }
+  }
+
+  .mat-card-content {
+    padding: 30px 24px;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+}
+
+// Alert Messages
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: rgba($warn, 0.05);
+  margin-bottom: 16px;
+
+  .mat-icon {
+    color: $warn;
+  }
+}
+
+.success-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: rgba($success, 0.05);
+  margin-bottom: 16px;
+
+  .mat-icon {
+    color: $success;
+  }
+}
+
+// Form Layout
+.form-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.form-field {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Terms and Conditions
+.terms-container {
+  margin: 8px 0;
+  position: relative;
+  padding-bottom: 24px;
+
+  .terms-checkbox {
+    font-size: 14px;
+  }
+
+  .terms-link {
+    color: $primary;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .terms-error {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 12px;
+  }
+}
+
+// Register Button
+.register-button {
+  margin-top: 16px;
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+
+  .mat-spinner {
+    display: inline-block;
+    margin: 0 auto;
+  }
+}
+
+// Login Link
+.login-link-container {
+  text-align: center;
+  font-size: 0.9rem;
+  color: $dark-gray;
+  margin-top: 24px;
+
+  .login-link {
+    margin-left: 8px;
+    color: $primary;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: $accent;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Custom Form Controls Styling
+::ng-deep {
+  .mat-form-field-appearance-outline .mat-form-field-prefix {
+    margin-right: 8px;
+  }
+
+  .mat-checkbox-layout {
+    white-space: normal !important;
+  }
+
+  .mat-checkbox-label {
+    line-height: 1.4;
+  }
+}
+
+// Responsive Styles
+@media (max-width: 599px) {
+  .register-container {
+    padding: 16px;
+    background-color: $white;
+    background-image: none;
+  }
+
+  .register-card-container {
+    max-width: 100%;
+  }
+
+  .register-card {
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .mat-card-content {
+    padding: 24px 16px;
+  }
+}

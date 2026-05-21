@@ -1,0 +1,342 @@
+/* user-profile.component.scss */
+
+// Biến màu sắc
+$primary-color: #2196f3;
+$primary-dark: #1976d2;
+$text-color: #333;
+$text-light: #757575;
+$background-light: #f5f7fa;
+$white: #ffffff;
+$border-color: #eee;
+$error-color: #f44336;
+
+// Container chính
+.profile-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Roboto", sans-serif;
+}
+
+// Phần header
+.profile-header-section {
+  position: relative;
+  margin-bottom: 50px;
+}
+
+.main-title {
+  margin-bottom: 15px;
+  color: $white;
+  font-size: 24px;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+  padding: 15px;
+}
+
+.profile-banner {
+  height: 100px;
+  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 50%, #1976d2 100%);
+  border-radius: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+// Loading spinner
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+// Card chính
+.profile-card {
+  border-radius: 12px;
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
+  overflow: visible !important;
+  position: relative;
+  padding: 0;
+  margin-top: -30px;
+}
+
+// Phần avatar
+.profile-avatar-section {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  position: relative;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(45deg, #ff4081, #c2185b);
+  color: $white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 4px solid $white;
+  margin-right: 20px;
+  text-transform: uppercase;
+}
+
+.profile-name {
+  h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 500;
+    color: $text-color;
+  }
+
+  .username {
+    color: $text-light;
+    margin: 4px 0 0;
+    font-size: 14px;
+  }
+}
+
+// Nút chỉnh sửa
+.edit-button-container {
+  position: absolute;
+  top: -24px;
+  right: 24px;
+}
+
+.edit-button {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  }
+}
+
+// Chi tiết hồ sơ
+.profile-details {
+  padding: 24px;
+  position: relative;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.profile-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: $background-light;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .info-icon {
+    color: $primary-color;
+    margin-right: 12px;
+    margin-top: 2px;
+  }
+
+  .info-content {
+    flex: 1;
+
+    label {
+      display: block;
+      color: $text-light;
+      font-size: 12px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: $text-color;
+      word-break: break-word;
+    }
+
+    .role-chips {
+      margin-top: 8px;
+    }
+  }
+}
+
+// Cập nhật gần nhất
+.last-updated {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: $text-light;
+  font-size: 12px;
+  margin-top: 16px;
+
+  mat-icon {
+    font-size: 14px;
+    height: 14px;
+    width: 14px;
+    margin-right: 4px;
+  }
+}
+
+// Form chỉnh sửa
+.edit-form {
+  padding: 24px;
+
+  .edit-title {
+    margin-top: 0;
+    margin-bottom: 24px;
+    color: $text-color;
+    font-size: 20px;
+    font-weight: 500;
+  }
+}
+
+.form-row {
+  margin-bottom: 20px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 24px;
+
+  button {
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Thông báo lỗi
+.error-message {
+  text-align: center;
+  padding: 40px;
+  background-color: #fef6f6;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  .error-icon {
+    color: $error-color;
+    font-size: 40px;
+    height: 40px;
+    width: 40px;
+  }
+
+  p {
+    color: $text-color;
+    font-size: 16px;
+    max-width: 400px;
+    margin: 0;
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+  .profile-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .profile-name h3 {
+    font-size: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .profile-card {
+    margin-top: 0;
+  }
+
+  .main-title {
+    font-size: 20px;
+  }
+
+  .profile-banner {
+    height: 80px;
+  }
+
+  .profile-header-section {
+    margin-bottom: 30px;
+  }
+}
+
+// Fix lỗi với Angular Material
+::ng-deep {
+  // Đảm bảo mat-card không có padding mặc định
+  .mat-mdc-card {
+    padding: 0 !important;
+  }
+
+  // Đảm bảo mat-card-content không có padding mặc định
+  .mat-mdc-card-content {
+    padding: 0 !important;
+  }
+
+  // Fix cho chip
+  .mdc-evolution-chip {
+    background-color: $primary-color !important;
+    color: $white !important;
+  }
+
+  // Fix cho input
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: $background-light !important;
+  }
+
+  // Fix cho button
+  .mat-mdc-fab.mat-primary {
+    --mdc-fab-container-color: #{$primary-color};
+  }
+
+  // Fix cho icon trong button
+  .mat-mdc-fab .mat-icon {
+    --mat-mdc-fab-icon-color: #{$white};
+  }
+}

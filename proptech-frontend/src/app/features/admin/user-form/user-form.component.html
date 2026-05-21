@@ -1,0 +1,234 @@
+<div class="admin-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Thanh bên -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Quản Trị</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/admin/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Tổng Quan</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/users"
+          routerLinkActive="active-link"
+          class="active-link"
+        >
+          <mat-icon>people</mat-icon>
+          <span>Người Dùng</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/realtors"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>badge</mat-icon>
+          <span>Môi Giới</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/listings"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Bất Động Sản</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Giao Dịch Mua</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Giao Dịch Thuê</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/payments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>credit_card</mat-icon>
+          <span>Thanh Toán</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Nội dung chính -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>{{ isEditMode ? "Chỉnh Sửa Người Dùng" : "Tạo Người Dùng Mới" }}</h1>
+          <span class="toolbar-spacer"></span>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <div class="user-form-container">
+          <mat-card class="user-form-card">
+            <mat-card-content>
+              <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                <!-- Hiển thị thông báo lỗi -->
+                <div
+                  *ngIf="errorMessage"
+                  class="error-message mat-elevation-z1"
+                >
+                  <mat-icon>error</mat-icon>
+                  <span>{{ errorMessage }}</span>
+                  <button mat-icon-button (click)="errorMessage = ''">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+
+                <!-- Thông tin cơ bản -->
+                <div class="section-container">
+                  <h2 class="section-title">Thông Tin Cơ Bản</h2>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Tên đăng nhập</mat-label>
+                      <input
+                        matInput
+                        formControlName="username"
+                        placeholder="Tên đăng nhập"
+                        [disabled]="isEditMode"
+                      />
+                      <mat-error *ngIf="f['username'].errors?.['required']">
+                        Tên đăng nhập là bắt buộc
+                      </mat-error>
+                      <mat-error *ngIf="f['username'].errors?.['minlength']">
+                        Tên đăng nhập phải có ít nhất 3 ký tự
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Họ và tên</mat-label>
+                      <input
+                        matInput
+                        formControlName="fullName"
+                        placeholder="Họ và tên"
+                      />
+                      <mat-error *ngIf="f['fullName'].errors?.['required']">
+                        Họ và tên là bắt buộc
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Email</mat-label>
+                      <input
+                        matInput
+                        formControlName="email"
+                        placeholder="Email"
+                        type="email"
+                      />
+                      <mat-error *ngIf="f['email'].errors?.['required']">
+                        Email là bắt buộc
+                      </mat-error>
+                      <mat-error *ngIf="f['email'].errors?.['email']">
+                        Vui lòng nhập email hợp lệ
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Số điện thoại</mat-label>
+                      <input
+                        matInput
+                        formControlName="phoneNumber"
+                        placeholder="Số điện thoại"
+                      />
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Trường mật khẩu - chỉ hiển thị khi tạo mới -->
+                <div class="section-container" *ngIf="!isEditMode">
+                  <h2 class="section-title">Bảo mật</h2>
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="form-field">
+                      <mat-label>Mật khẩu</mat-label>
+                      <input
+                        matInput
+                        formControlName="password"
+                        placeholder="Mật khẩu"
+                        type="password"
+                      />
+                      <mat-error *ngIf="f['password'].errors?.['required']">
+                        Mật khẩu là bắt buộc
+                      </mat-error>
+                      <mat-error *ngIf="f['password'].errors?.['minlength']">
+                        Mật khẩu phải có ít nhất 6 ký tự
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Vai trò người dùng - chỉ hiển thị khi tạo mới -->
+                <div class="section-container" *ngIf="!isEditMode">
+                  <h2 class="section-title">Vai Trò Người Dùng</h2>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Vai trò</mat-label>
+                    <mat-select formControlName="roles" multiple>
+                      <mat-option
+                        *ngFor="let role of availableRoles"
+                        [value]="role.value"
+                      >
+                        {{ role.label }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="f['roles'].errors?.['required']">
+                      Phải chọn ít nhất một vai trò
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <!-- Nút hành động -->
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="submitting"
+                  >
+                    <mat-spinner diameter="20" *ngIf="submitting"></mat-spinner>
+                    <span *ngIf="!submitting">{{
+                      isEditMode ? "Cập Nhật Người Dùng" : "Tạo Người Dùng"
+                    }}</span>
+                  </button>
+                  <button mat-button type="button" (click)="cancel()">
+                    Hủy
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

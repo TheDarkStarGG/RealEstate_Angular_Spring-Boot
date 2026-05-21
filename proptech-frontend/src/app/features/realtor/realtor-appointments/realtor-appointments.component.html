@@ -1,0 +1,461 @@
+<div class="dashboard-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Thanh bên -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Điều Khiển Môi Giới</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/realtor/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Bảng Điều Khiển</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/listings"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Danh Sách Nhà Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Doanh Số Bán Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Cho Thuê Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/appointments"
+          routerLinkActive="active-link"
+          class="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Nội dung chính -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>Lịch Hẹn Của Tôi</h1>
+          <span class="toolbar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="exportMenu">
+            <mat-icon>save_alt</mat-icon>
+            Xuất
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item>Xuất ra PDF</button>
+            <button mat-menu-item>Xuất ra Excel</button>
+            <button mat-menu-item>In</button>
+          </mat-menu>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Nội dung lịch hẹn -->
+        <div class="appointments-container">
+          <!-- Tiêu đề với thống kê -->
+          <div class="dashboard-header mat-elevation-z2">
+            <div class="header-title">
+              <h1 class="mat-headline-5">Lịch Hẹn Của Tôi</h1>
+              <p class="mat-body-1">
+                Quản lý các lịch hẹn xem nhà của bạn tại một nơi
+              </p>
+            </div>
+            <div class="stats-cards">
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-value">{{ totalElements }}</div>
+                  <div class="stat-label">Tổng Số Lịch Hẹn</div>
+                </mat-card-content>
+              </mat-card>
+              <mat-card class="stat-card active">
+                <mat-card-content>
+                  <div class="stat-value">
+                    {{ getConfirmedAppointmentsCount() }}
+                  </div>
+                  <div class="stat-label">Đã Xác Nhận</div>
+                </mat-card-content>
+              </mat-card>
+              <mat-card class="stat-card inactive">
+                <mat-card-content>
+                  <div class="stat-value">
+                    {{ getPendingAppointmentsCount() }}
+                  </div>
+                  <div class="stat-label">Đang Chờ Xử Lý</div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+
+          <!-- Nội dung chính -->
+          <mat-card class="appointments-card mat-elevation-z1">
+            <mat-card-content>
+              <!-- Hàng bộ lọc và tìm kiếm -->
+              <div class="filters-row">
+                <mat-form-field appearance="outline" class="search-field">
+                  <mat-label>Tìm kiếm lịch hẹn</mat-label>
+                  <input
+                    matInput
+                    (keyup)="applyFilter($event)"
+                    placeholder="Tìm theo bất động sản, khách hàng, hoặc ngày"
+                    #input
+                  />
+                  <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Trạng Thái</mat-label>
+                  <mat-select (selectionChange)="filterByStatus($event.value)">
+                    <mat-option value="">Tất Cả</mat-option>
+                    <mat-option value="REQUESTED">Đã Yêu Cầu</mat-option>
+                    <mat-option value="CONFIRMED">Đã Xác Nhận</mat-option>
+                    <mat-option value="COMPLETED">Đã Hoàn Thành</mat-option>
+                    <mat-option value="CANCELLED">Đã Hủy</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>Từ Ngày</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="fromPicker"
+                    [(ngModel)]="fromDate"
+                    (dateChange)="filterByDateRange()"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="fromPicker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #fromPicker></mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>Đến Ngày</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="toPicker"
+                    [(ngModel)]="toDate"
+                    (dateChange)="filterByDateRange()"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="toPicker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #toPicker></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <!-- Hiển thị thông báo lỗi -->
+              <div *ngIf="errorMessage" class="error-message mat-elevation-z1">
+                <mat-icon>error</mat-icon>
+                <span>{{ errorMessage }}</span>
+                <button mat-icon-button (click)="dismissError()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <!-- Biểu tượng đang tải -->
+              <div *ngIf="loading" class="loading-container">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+
+              <!-- Vùng chứa bảng -->
+              <div class="table-container mat-elevation-z1" *ngIf="!loading">
+                <table mat-table [dataSource]="dataSource" matSort>
+                  <!-- Cột ID -->
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      ID
+                    </th>
+                    <td mat-cell *matCellDef="let appointment">
+                      {{ appointment.id }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Bất Động Sản -->
+                  <ng-container matColumnDef="property">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Bất Động Sản
+                    </th>
+                    <td
+                      mat-cell
+                      *matCellDef="let appointment"
+                      class="property-cell"
+                    >
+                      <div class="property-info">
+                        <span class="property-title">{{
+                          appointment.listing?.title || "N/A"
+                        }}</span>
+                        <span class="property-address mat-caption">
+                          <mat-icon class="small-icon">location_on</mat-icon>
+                          {{
+                            (appointment.listing ? 
+                            `${appointment.listing.address ?? ''} ${appointment.listing.city ?? ''} ${appointment.listing.state ?? ''}`.trim() : 
+                            "Vị trí chưa được xác định")
+                          }}
+                        </span>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Khách Hàng -->
+                  <ng-container matColumnDef="client">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Khách Hàng
+                    </th>
+                    <td mat-cell *matCellDef="let appointment">
+                      {{ appointment.client?.fullName || "N/A" }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Ngày & Giờ -->
+                  <ng-container matColumnDef="dateTime">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Ngày & Giờ
+                    </th>
+                    <td
+                      mat-cell
+                      *matCellDef="let appointment"
+                      class="datetime-cell"
+                    >
+                      {{ appointment.appointmentDateTime | date : "medium" }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Thời Lượng -->
+                  <ng-container matColumnDef="duration">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Thời Lượng
+                    </th>
+                    <td mat-cell *matCellDef="let appointment">
+                      {{ appointment.durationMinutes }} phút
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Trạng Thái -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Trạng Thái
+                    </th>
+                    <td mat-cell *matCellDef="let appointment">
+                      <div class="status-chip">
+                        <mat-chip
+                          [ngClass]="
+                            'status-' + appointment.status.toLowerCase()
+                          "
+                        >
+                          {{ appointment.status }}
+                        </mat-chip>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Thao Tác -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Thao Tác</th>
+                    <td mat-cell *matCellDef="let appointment">
+                      <div
+                        class="action-buttons"
+                        *ngIf="selectedAppointmentId !== appointment.id"
+                      >
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          matTooltip="Xem Chi Tiết"
+                          (click)="viewAppointment(appointment.id)"
+                        >
+                          <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          matTooltip="Cập Nhật Trạng Thái"
+                          (click)="openStatusUpdateMenu(appointment)"
+                          [disabled]="appointment.status === 'CANCELLED'"
+                        >
+                          <mat-icon>update</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          matTooltip="Đặt Lại Lịch"
+                          (click)="rescheduleAppointment(appointment.id)"
+                          [disabled]="
+                            appointment.status === 'COMPLETED' ||
+                            appointment.status === 'CANCELLED'
+                          "
+                        >
+                          <mat-icon>schedule</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          matTooltip="Hủy Lịch Hẹn"
+                          (click)="confirmCancel(appointment.id)"
+                          [disabled]="
+                            appointment.status === 'COMPLETED' ||
+                            appointment.status === 'CANCELLED'
+                          "
+                        >
+                          <mat-icon>close</mat-icon>
+                        </button>
+                      </div>
+
+                      <!-- Giao Diện Thay Đổi Trạng Thái -->
+                      <div
+                        class="status-change"
+                        *ngIf="isChangingStatus(appointment.id)"
+                      >
+                        <mat-form-field
+                          appearance="outline"
+                          class="status-select"
+                        >
+                          <mat-label>Trạng Thái Mới</mat-label>
+                          <mat-select [(value)]="selectedStatus">
+                            <mat-option value="REQUESTED"
+                              >Đã Yêu Cầu</mat-option
+                            >
+                            <mat-option value="CONFIRMED"
+                              >Đã Xác Nhận</mat-option
+                            >
+                            <mat-option value="COMPLETED"
+                              >Đã Hoàn Thành</mat-option
+                            >
+                            <mat-option value="CANCELLED">Đã Hủy</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <div class="status-buttons">
+                          <button
+                            mat-raised-button
+                            color="primary"
+                            [disabled]="statusUpdateInProgress"
+                            (click)="updateAppointmentStatus(appointment.id)"
+                          >
+                            <mat-spinner
+                              *ngIf="statusUpdateInProgress"
+                              diameter="20"
+                            ></mat-spinner>
+                            <span *ngIf="!statusUpdateInProgress"
+                              >Cập Nhật</span
+                            >
+                          </button>
+                          <button
+                            mat-button
+                            [disabled]="statusUpdateInProgress"
+                            (click)="cancelStatusUpdate()"
+                          >
+                            Hủy
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Giao Diện Xác Nhận Hủy -->
+                      <div
+                        class="delete-confirmation"
+                        *ngIf="isCancelling(appointment.id)"
+                      >
+                        <span class="confirm-text">Hủy?</span>
+                        <button
+                          mat-raised-button
+                          color="warn"
+                          [disabled]="cancelInProgress"
+                          (click)="cancelAppointment(appointment.id)"
+                        >
+                          <mat-spinner
+                            *ngIf="cancelInProgress"
+                            diameter="20"
+                          ></mat-spinner>
+                          <span *ngIf="!cancelInProgress">Có</span>
+                        </button>
+                        <button
+                          mat-button
+                          [disabled]="cancelInProgress"
+                          (click)="cancelCancelConfirmation()"
+                        >
+                          Không
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayedColumns; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedColumns"
+                    [class.cancelled-row]="row.status === 'CANCELLED'"
+                  ></tr>
+
+                  <!-- Hàng Không Có Dữ Liệu -->
+                  <tr class="mat-row" *matNoDataRow>
+                    <td
+                      class="mat-cell no-data"
+                      [attr.colspan]="displayedColumns.length"
+                    >
+                      <div *ngIf="!loading && input.value">
+                        <mat-icon>search_off</mat-icon>
+                        <p>
+                          Không tìm thấy lịch hẹn nào phù hợp với "{{
+                            input.value
+                          }}"
+                        </p>
+                        <button
+                          mat-button
+                          color="primary"
+                          (click)="clearSearch()"
+                        >
+                          Xóa Tìm Kiếm
+                        </button>
+                      </div>
+                      <div *ngIf="!loading && !input.value">
+                        <mat-icon>event</mat-icon>
+                        <p>Không tìm thấy lịch hẹn nào</p>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Phân Trang -->
+              <mat-paginator
+                class="custom-paginator"
+                [pageSizeOptions]="[5, 10, 25, 50]"
+                [pageSize]="pageSize"
+                [pageIndex]="currentPage"
+                [length]="totalElements"
+                showFirstLastButtons
+                (page)="onPageChange($event)"
+                aria-label="Chọn trang lịch hẹn"
+              >
+              </mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

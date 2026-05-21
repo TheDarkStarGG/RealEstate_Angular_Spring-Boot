@@ -1,0 +1,44 @@
+.payment-form-content {
+  padding: 8px;
+  min-width: 300px;
+  max-width: 600px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spinner-in-button {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+// Override Material styles to show currency prefix properly
+.mat-mdc-form-field-prefix {
+  top: 0 !important;
+}
+
+// Add some space between the dialog title and content
+h2.mat-dialog-title {
+  margin-bottom: 16px;
+  color: #673ab7;
+  font-weight: 500;
+}
+
+// Style the dialog actions
+mat-dialog-actions {
+  padding: 12px 0;
+}

@@ -1,0 +1,196 @@
+<!-- listing-detail.component.html -->
+<div class="detail-container" *ngIf="listing">
+  <!-- Điều hướng breadcrumb -->
+  <div class="breadcrumb-nav">
+    <a routerLink="/" class="breadcrumb-link">Trang chủ</a>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <a routerLink="/listings" class="breadcrumb-link">Bất động sản</a>
+    <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+    <span class="breadcrumb-current">{{ listing?.title }}</span>
+  </div>
+
+  <!-- Bố cục hai cột: Hình ảnh bên trái, chi tiết bên phải -->
+  <div class="property-layout">
+    <!-- Cột trái: Hình ảnh -->
+    <div class="image-column">
+      <mat-card class="gallery-card">
+        <div class="image-gallery-container">
+          <button
+            mat-icon-button
+            class="gallery-nav prev-btn"
+            (click)="prevImage()"
+            *ngIf="isMultipleImages()"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <div class="property-image-container">
+            <img
+              [src]="currentImage"
+              [alt]="listing?.title"
+              class="property-image"
+            />
+          </div>
+          <button
+            mat-icon-button
+            class="gallery-nav next-btn"
+            (click)="nextImage()"
+            *ngIf="isMultipleImages()"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <!-- Hình thu nhỏ -->
+        <div class="image-thumbnails" *ngIf="isMultipleImages()">
+          <div
+            *ngFor="let image of listing?.images; let i = index"
+            class="image-thumbnail"
+            [class.active]="i === currentImageIndex"
+            (click)="setCurrentImage(i)"
+          >
+            <img [src]="image" [alt]="'Hình thu nhỏ ' + (i + 1)" />
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Cột phải: Chi tiết bất động sản -->
+    <div class="details-column">
+      <mat-card class="details-card">
+        <!-- Thông tin tiêu đề bất động sản -->
+        <div class="property-header">
+          <div class="property-title-container">
+            <h1 class="property-title">{{ listing?.title }}</h1>
+            <div
+              class="listing-badge"
+              [ngClass]="{
+                'primary-badge': listing?.listingType === 'SALE',
+                'success-badge': listing?.listingType === 'RENT'
+              }"
+            >
+              {{ listing?.listingType === "SALE" ? "Bán" : "Cho thuê" }}
+            </div>
+          </div>
+          <h2 class="property-price">
+            {{ listing?.price | currency }}
+            <span *ngIf="listing?.listingType === 'RENT'">/tháng</span>
+          </h2>
+        </div>
+
+        <!-- Vị trí bất động sản -->
+        <div class="property-location">
+          <mat-icon>location_on</mat-icon>
+          <span>
+            {{ listing?.address }}
+            <span *ngIf="listing?.city"
+              >, {{ listing?.city }}, {{ listing?.state }}
+              {{ listing?.zipCode }}</span
+            >
+          </span>
+        </div>
+
+        <!-- Đặc điểm bất động sản -->
+        <div class="property-features">
+          <div class="feature" *ngIf="listing?.bedrooms !== undefined">
+            <mat-icon>king_bed</mat-icon>
+            <span
+              >{{ listing?.bedrooms }}
+              {{ listing?.bedrooms === 1 ? "Phòng ngủ" : "Phòng ngủ" }}</span
+            >
+          </div>
+          <div class="feature" *ngIf="listing?.bathrooms !== undefined">
+            <mat-icon>bathroom</mat-icon>
+            <span
+              >{{ listing?.bathrooms }}
+              {{ listing?.bathrooms === 1 ? "Phòng tắm" : "Phòng tắm" }}</span
+            >
+          </div>
+          <div class="feature" *ngIf="listing?.area">
+            <mat-icon>square_foot</mat-icon>
+            <span>{{ listing?.area }} m²</span>
+          </div>
+          <div class="feature">
+            <mat-icon>home</mat-icon>
+            <span>{{ formatPropertyType(listing?.propertyType) }}</span>
+          </div>
+        </div>
+
+        <mat-divider class="section-divider"></mat-divider>
+
+        <!-- Mô tả bất động sản -->
+        <div class="property-description">
+          <h3 class="section-title">Mô tả</h3>
+          <p>{{ listing?.description }}</p>
+        </div>
+
+        <!-- Các thao tác nhanh -->
+        <div class="quick-actions">
+          <button mat-raised-button color="primary" (click)="toggleFavorite()">
+            <mat-icon>{{
+              isFavorite ? "favorite" : "favorite_border"
+            }}</mat-icon>
+            {{ isFavorite ? "Đã lưu" : "Lưu" }}
+          </button>
+          <button mat-raised-button color="accent" (click)="shareListing()">
+            <mat-icon>share</mat-icon> Chia sẻ
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Thông tin môi giới (phía dưới cả hai cột) -->
+  <mat-card class="realtor-card">
+    <h3 class="section-title">Được đăng bởi</h3>
+
+    <div class="realtor-container" *ngIf="listing?.realtor">
+      <div class="realtor-info">
+        <div class="realtor-avatar">
+          <mat-icon class="avatar-icon">account_circle</mat-icon>
+        </div>
+        <div class="realtor-details">
+          <h4 class="realtor-name">{{ listing.realtor.fullName }}</h4>
+          <div class="contact-info" *ngIf="listing.realtor.phoneNumber">
+            <mat-icon>phone</mat-icon>
+            <span>{{ listing.realtor.phoneNumber }}</span>
+          </div>
+          <div class="contact-info" *ngIf="listing.realtor.email">
+            <mat-icon>email</mat-icon>
+            <span>{{ listing.realtor.email }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="realtor-actions">
+        <button mat-raised-button color="primary" (click)="openContactDialog()">
+          <mat-icon>message</mat-icon> Liên hệ
+        </button>
+        <button mat-raised-button color="accent" (click)="openScheduleDialog()">
+          <mat-icon>event</mat-icon> Đặt lịch xem nhà
+        </button>
+      </div>
+    </div>
+
+    <div class="no-realtor" *ngIf="!listing?.realtor">
+      <p>Thông tin liên hệ cho bất động sản này không khả dụng.</p>
+    </div>
+  </mat-card>
+
+  <!-- Phần bất động sản liên quan -->
+  <div
+    class="related-properties"
+    *ngIf="relatedListings && relatedListings.length > 0"
+  >
+    <h3 class="section-title">Bất động sản tương tự</h3>
+    <div class="related-properties-grid">
+      <app-listing-card
+        *ngFor="let relatedListing of relatedListings"
+        [listing]="relatedListing"
+      ></app-listing-card>
+    </div>
+  </div>
+</div>
+
+<!-- Hiệu ứng đang tải -->
+<div class="loading-container" *ngIf="loading">
+  <mat-spinner diameter="60"></mat-spinner>
+</div>

@@ -1,0 +1,253 @@
+// Variables
+$primary: #3f51b5;
+$accent: #ff4081;
+$white: #ffffff;
+$light-gray: #f5f5f5;
+$medium-gray: #e0e0e0;
+$dark-gray: #757575;
+$error-red: #f44336;
+$card-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+// Main Container
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+  padding: 40px 20px;
+  background-color: $light-gray;
+}
+
+// Card Container for centering
+.login-card-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto; // Căn giữa container
+}
+
+// Login Card
+.login-card {
+  box-shadow: $card-shadow;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: $white;
+  padding: 0;
+  margin-bottom: 20px;
+
+  .login-header {
+    background-color: $primary;
+    color: $white;
+    padding: 20px 24px;
+    text-align: left;
+
+    .login-title {
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      font-weight: 500;
+    }
+
+    .login-subtitle {
+      font-size: 16px;
+      margin: 0;
+      opacity: 0.9;
+    }
+  }
+
+  .mat-card-content {
+    padding: 30px 24px;
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+  }
+}
+
+// Error Alert
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 4px;
+  background-color: rgba($error-red, 0.05);
+  margin-bottom: 16px;
+
+  .mat-icon {
+    color: $error-red;
+  }
+}
+
+// Input Field Styling
+.input-field {
+  margin-bottom: 30px;
+  position: relative;
+  width: 100%;
+
+  .input-label {
+    display: flex;
+    align-items: center;
+    border: 1px solid $medium-gray;
+    border-radius: 4px;
+    padding: 0;
+    height: 54px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+
+    &:focus-within {
+      border-color: $primary;
+    }
+  }
+
+  .input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px; // Chiều rộng cố định cho icon
+    height: 100%;
+    color: $dark-gray;
+    padding-left: 12px;
+  }
+
+  .form-input {
+    border: none;
+    outline: none;
+    width: calc(100% - 54px); // Chiều rộng = 100% - chiều rộng icon
+    height: 100%;
+    font-size: 16px;
+    padding: 0 12px;
+
+    &::placeholder {
+      color: $dark-gray;
+    }
+  }
+
+  .toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $dark-gray;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 40px;
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-error {
+    color: $error-red;
+    font-size: 14px;
+    margin-top: 8px;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+  }
+}
+
+// Remember Me Row
+.remember-forgot-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0 20px;
+  width: 100%;
+
+  .remember-me-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+
+    .remember-me-checkbox {
+      margin-right: 8px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .forgot-password {
+    color: $primary;
+    text-decoration: none;
+    font-size: 14px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Login Button
+.login-button {
+  background-color: $primary;
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 0 16px;
+  height: 48px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: darken($primary, 10%);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .mat-spinner {
+    display: inline-block;
+    margin: 0 auto;
+  }
+}
+
+// Register Link
+.register-link-container {
+  text-align: center;
+  font-size: 14px;
+  color: $dark-gray;
+  margin-top: 30px;
+  width: 100%;
+
+  .register-link {
+    margin-left: 8px;
+    color: $primary;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Responsive Styles
+@media (max-width: 599px) {
+  .login-container {
+    padding: 16px;
+    background-color: $white;
+  }
+
+  .login-card-container {
+    max-width: 100%;
+  }
+
+  .login-card {
+    box-shadow: none;
+    border-radius: 0;
+  }
+}

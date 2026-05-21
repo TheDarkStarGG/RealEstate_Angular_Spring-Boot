@@ -1,0 +1,153 @@
+<!-- HTML Đã sửa cho user-profile.component.html -->
+<div class="profile-container">
+  <!-- Cải thiện phần header -->
+  <div class="profile-header-section">
+    <div class="profile-banner"></div>
+    <h2 class="main-title">Thông Tin Tài Khoản</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner diameter="40" color="accent"></mat-spinner>
+  </div>
+
+  <mat-card *ngIf="!isLoading && userProfile" class="profile-card">
+    <div class="profile-avatar-section">
+      <div class="profile-avatar">
+        {{ userProfile.fullName.charAt(0) }}
+      </div>
+      <div class="profile-name">
+        <h3>{{ userProfile.fullName }}</h3>
+        <p class="username">{{ "@" + userProfile.username }}</p>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <!-- View mode -->
+      <div *ngIf="!isEditing" class="profile-details">
+        <div class="edit-button-container">
+          <button
+            mat-fab
+            color="primary"
+            class="edit-button"
+            (click)="toggleEditMode()"
+            matTooltip="Chỉnh sửa hồ sơ"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+
+        <div class="profile-info-grid">
+          <div class="profile-item">
+            <mat-icon class="info-icon">badge</mat-icon>
+            <div class="info-content">
+              <label>Tên người dùng</label>
+              <p>{{ userProfile.username }}</p>
+            </div>
+          </div>
+
+          <div class="profile-item">
+            <mat-icon class="info-icon">person</mat-icon>
+            <div class="info-content">
+              <label>Họ và tên</label>
+              <p>{{ userProfile.fullName }}</p>
+            </div>
+          </div>
+
+          <div class="profile-item">
+            <mat-icon class="info-icon">email</mat-icon>
+            <div class="info-content">
+              <label>Email</label>
+              <p>{{ userProfile.email }}</p>
+            </div>
+          </div>
+
+          <div class="profile-item" *ngIf="userProfile.phoneNumber">
+            <mat-icon class="info-icon">phone</mat-icon>
+            <div class="info-content">
+              <label>Số điện thoại</label>
+              <p>{{ userProfile.phoneNumber }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="last-updated">
+          <mat-icon>update</mat-icon>
+          <span>Cập nhật gần nhất: 14/05/2025</span>
+        </div>
+      </div>
+
+      <!-- Edit mode -->
+      <form
+        [formGroup]="profileForm"
+        (ngSubmit)="saveProfile()"
+        *ngIf="isEditing"
+        class="edit-form"
+      >
+        <h3 class="edit-title">Chỉnh sửa thông tin</h3>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Họ và tên</mat-label>
+            <input matInput formControlName="fullName" required />
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error
+              *ngIf="profileForm.get('fullName')?.hasError('required')"
+            >
+              Họ tên không được để trống
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" required type="email" />
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
+              Email không được để trống
+            </mat-error>
+            <mat-error *ngIf="profileForm.get('email')?.hasError('email')">
+              Vui lòng nhập email hợp lệ
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Số điện thoại</mat-label>
+            <input matInput formControlName="phoneNumber" />
+            <mat-icon matPrefix>phone</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="action-buttons">
+          <button mat-button type="button" (click)="toggleEditMode()">
+            <mat-icon>cancel</mat-icon> Hủy
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="profileForm.invalid"
+          >
+            <mat-icon>save</mat-icon> Lưu thay đổi
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!isLoading && !userProfile" class="error-message">
+    <mat-icon class="error-icon">error</mat-icon>
+    <p>
+      Không thể tải thông tin hồ sơ. Vui lòng làm mới trang hoặc thử lại sau.
+    </p>
+    <button mat-raised-button color="primary" (click)="loadUserProfile()">
+      Thử lại
+    </button>
+  </div>
+</div>

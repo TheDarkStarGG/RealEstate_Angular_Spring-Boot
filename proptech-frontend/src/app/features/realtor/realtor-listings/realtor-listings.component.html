@@ -1,0 +1,426 @@
+<div class="dashboard-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Thanh bên -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Điều Khiển Môi Giới</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/realtor/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Bảng Điều Khiển</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/listings"
+          routerLinkActive="active-link"
+          class="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Danh Sách Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Doanh Số Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Cho Thuê Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Nội dung chính -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>Danh Sách Bất Động Sản Của Tôi</h1>
+          <span class="toolbar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="exportMenu">
+            <mat-icon>save_alt</mat-icon>
+            Xuất
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item>Xuất ra PDF</button>
+            <button mat-menu-item>Xuất ra Excel</button>
+            <button mat-menu-item>In</button>
+          </mat-menu>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Nội dung danh sách -->
+        <div class="listings-container">
+          <!-- Tiêu đề với thống kê -->
+          <div class="dashboard-header mat-elevation-z2">
+            <div class="header-title">
+              <h1 class="mat-headline-5">Danh Sách Bất Động Sản Của Tôi</h1>
+              <p class="mat-body-1">
+                Quản lý các danh sách bất động sản đã gửi xét duyệt
+              </p>
+            </div>
+            <div class="stats-cards">
+              <mat-card class="stat-card">
+                <mat-card-content>
+                  <div class="stat-value">{{ totalElements }}</div>
+                  <div class="stat-label">Tổng Danh Sách</div>
+                </mat-card-content>
+              </mat-card>
+              <mat-card class="stat-card active">
+                <mat-card-content>
+                  <div class="stat-value">{{ getActiveListingsCount() }}</div>
+                  <div class="stat-label">Đang Hoạt Động</div>
+                </mat-card-content>
+              </mat-card>
+              <mat-card class="stat-card inactive">
+                <mat-card-content>
+                  <div class="stat-value">{{ getInactiveListingsCount() }}</div>
+                  <div class="stat-label">Đang Chờ Duyệt</div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+            <button
+              mat-raised-button
+              color="primary"
+              class="create-button"
+              (click)="createNewListing()"
+            >
+              <mat-icon>add</mat-icon> Tạo Danh Sách Mới
+            </button>
+          </div>
+
+          <!-- Nội dung chính -->
+          <mat-card class="listings-card mat-elevation-z1">
+            <mat-card-content>
+              <!-- Hàng bộ lọc và tìm kiếm -->
+              <div class="filters-row">
+                <mat-form-field appearance="outline" class="search-field">
+                  <mat-label>Tìm kiếm danh sách</mat-label>
+                  <input
+                    matInput
+                    (keyup)="applyFilter($event)"
+                    placeholder="Tìm theo tiêu đề, loại hoặc bất động sản"
+                    #input
+                  />
+                  <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Loại Bất Động Sản</mat-label>
+                  <mat-select
+                    (selectionChange)="filterByPropertyType($event.value)"
+                  >
+                    <mat-option value="">Tất Cả Loại</mat-option>
+                    <mat-option value="HOUSE">Nhà</mat-option>
+                    <mat-option value="APARTMENT">Căn Hộ</mat-option>
+                    <mat-option value="CONDO">Chung Cư</mat-option>
+                    <mat-option value="OFFICE">Văn Phòng</mat-option>
+                    <mat-option value="LAND">Đất</mat-option>
+                    <mat-option value="OTHER">Khác</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Loại Danh Sách</mat-label>
+                  <mat-select
+                    (selectionChange)="filterByListingType($event.value)"
+                  >
+                    <mat-option value="">Tất Cả</mat-option>
+                    <mat-option value="SALE">Để Bán</mat-option>
+                    <mat-option value="RENT">Cho Thuê</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="filter-field">
+                  <mat-label>Trạng Thái</mat-label>
+                  <mat-select (selectionChange)="filterByStatus($event.value)">
+                    <mat-option value="">Tất Cả</mat-option>
+                    <mat-option value="true">Đang Hoạt Động</mat-option>
+                    <mat-option value="false">Đang Chờ Duyệt</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <!-- Hiển thị thông báo lỗi -->
+              <div *ngIf="errorMessage" class="error-message mat-elevation-z1">
+                <mat-icon>error</mat-icon>
+                <span>{{ errorMessage }}</span>
+                <button mat-icon-button (click)="dismissError()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <!-- Biểu tượng đang tải -->
+              <div *ngIf="loading" class="loading-container">
+                <mat-spinner diameter="40"></mat-spinner>
+              </div>
+
+              <!-- Vùng chứa bảng -->
+              <div class="table-container mat-elevation-z1" *ngIf="!loading">
+                <table mat-table [dataSource]="dataSource" matSort>
+                  <!-- Cột Hình Ảnh -->
+                  <ng-container matColumnDef="image">
+                    <th mat-header-cell *matHeaderCellDef>Hình Ảnh</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <div class="listing-image">
+                        <img
+                          *ngIf="listing.images && listing.images.length > 0"
+                          [src]="listing.images[0]"
+                          alt="Hình ảnh bất động sản"
+                        />
+                        <div
+                          *ngIf="!listing.images || listing.images.length === 0"
+                          class="placeholder-image"
+                        >
+                          <mat-icon>home</mat-icon>
+                        </div>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Tiêu Đề -->
+                  <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Tiêu Đề
+                    </th>
+                    <td mat-cell *matCellDef="let listing" class="title-cell">
+                      <div class="listing-info">
+                        <span class="listing-title">{{ listing.title }}</span>
+                        <span class="listing-address mat-caption">
+                          <mat-icon class="small-icon">location_on</mat-icon>
+                          {{ listing.address }}, {{ listing.city }}
+                          {{ listing.state }}
+                        </span>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Loại Danh Sách -->
+                  <ng-container matColumnDef="listingType">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Loại
+                    </th>
+                    <td mat-cell *matCellDef="let listing">
+                      <mat-chip-set>
+                        <mat-chip
+                          [color]="
+                            listing.listingType === 'SALE'
+                              ? 'accent'
+                              : 'primary'
+                          "
+                          [highlighted]="true"
+                        >
+                          {{ getListingTypeLabel(listing.listingType) }}
+                        </mat-chip>
+                      </mat-chip-set>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Loại Bất Động Sản -->
+                  <ng-container matColumnDef="propertyType">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Bất Động Sản
+                    </th>
+                    <td mat-cell *matCellDef="let listing">
+                      {{ getPropertyTypeLabel(listing.propertyType) }}
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Giá -->
+                  <ng-container matColumnDef="price">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Giá
+                    </th>
+                    <td mat-cell *matCellDef="let listing" class="price-cell">
+                      <div class="price-tag">
+                        {{ formatPrice(listing.price) }}
+                        <span
+                          *ngIf="listing.listingType === 'RENT'"
+                          class="per-period"
+                          >/tháng</span
+                        >
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Trạng Thái -->
+                  <ng-container matColumnDef="active">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                      Trạng Thái
+                    </th>
+                    <td mat-cell *matCellDef="let listing">
+                      <div class="status-container">
+                        <span
+                          class="status-label"
+                          [class.active]="listing.active"
+                          [class.inactive]="!listing.active"
+                        >
+                          <mat-icon
+                            class="status-icon"
+                            [class.active-icon]="listing.active"
+                            [class.inactive-icon]="!listing.active"
+                          >
+                            {{
+                              listing.active ? "check_circle" : "hourglass_top"
+                            }}
+                          </mat-icon>
+                          {{
+                            listing.active ? "Đang Hoạt Động" : "Đang Chờ Duyệt"
+                          }}
+                        </span>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Thao Tác -->
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Thao Tác</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <div
+                        class="action-buttons"
+                        *ngIf="deleteItemId !== listing.id"
+                      >
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          matTooltip="Xem Danh Sách"
+                          (click)="viewListing(listing.id)"
+                        >
+                          <mat-icon>visibility</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          matTooltip="Sửa Danh Sách"
+                          (click)="editListing(listing.id)"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          matTooltip="Xóa Danh Sách"
+                          (click)="confirmDelete(listing.id)"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                      <div
+                        class="delete-confirmation"
+                        *ngIf="deleteItemId === listing.id"
+                      >
+                        <span class="confirm-text">Xóa?</span>
+                        <button
+                          mat-raised-button
+                          color="warn"
+                          [disabled]="deleteInProgress"
+                          (click)="deleteListing(listing.id)"
+                        >
+                          <mat-spinner
+                            *ngIf="deleteInProgress"
+                            diameter="20"
+                          ></mat-spinner>
+                          <span *ngIf="!deleteInProgress">Có</span>
+                        </button>
+                        <button
+                          mat-button
+                          [disabled]="deleteInProgress"
+                          (click)="cancelDelete()"
+                        >
+                          Không
+                        </button>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <tr
+                    mat-header-row
+                    *matHeaderRowDef="displayedColumns; sticky: true"
+                  ></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: displayedColumns"
+                    [class.inactive-row]="!row.active"
+                  ></tr>
+
+                  <!-- Hàng Không Có Dữ Liệu -->
+                  <tr class="mat-row" *matNoDataRow>
+                    <td
+                      class="mat-cell no-data"
+                      [attr.colspan]="displayedColumns.length"
+                    >
+                      <div *ngIf="!loading && input.value">
+                        <mat-icon>search_off</mat-icon>
+                        <p>
+                          Không tìm thấy danh sách nào khớp với "{{
+                            input.value
+                          }}"
+                        </p>
+                        <button
+                          mat-button
+                          color="primary"
+                          (click)="clearSearch()"
+                        >
+                          Xóa Tìm Kiếm
+                        </button>
+                      </div>
+                      <div *ngIf="!loading && !input.value">
+                        <mat-icon>home_work</mat-icon>
+                        <p>Không tìm thấy danh sách nào</p>
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          (click)="createNewListing()"
+                        >
+                          <mat-icon>add</mat-icon> Tạo danh sách đầu tiên của
+                          bạn
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Phân Trang -->
+              <mat-paginator
+                class="custom-paginator"
+                [pageSizeOptions]="[5, 10, 25, 50]"
+                [pageSize]="pageSize"
+                [pageIndex]="currentPage"
+                [length]="totalElements"
+                showFirstLastButtons
+                (page)="onPageChange($event)"
+                aria-label="Chọn trang danh sách"
+              >
+              </mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

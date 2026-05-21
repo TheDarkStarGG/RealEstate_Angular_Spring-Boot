@@ -1,0 +1,74 @@
+.access-denied-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 24px;
+  background-color: #fafafa;
+}
+
+.access-denied-card {
+  max-width: 500px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+}
+
+.error-header {
+  background-color: #f44336;
+  padding: 16px;
+  color: white;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.mat-card-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
+  color: #f44336;
+  margin-bottom: 16px;
+}
+
+.mat-h2 {
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+}
+
+.secondary-text {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 24px;
+}
+
+.action-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+@media (max-width: 599px) {
+  .action-container {
+    flex-direction: column;
+  }
+
+  .access-denied-card {
+    max-width: 100%;
+  }
+}

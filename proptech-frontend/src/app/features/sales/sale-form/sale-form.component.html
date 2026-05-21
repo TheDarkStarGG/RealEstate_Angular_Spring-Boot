@@ -1,0 +1,194 @@
+<h2 mat-dialog-title>
+  {{ isNew ? "Tạo Giao Dịch Bán Mới" : "Chỉnh Sửa Giao Dịch Bán" }}
+</h2>
+
+<form [formGroup]="saleForm" (ngSubmit)="onSubmit()">
+  <mat-dialog-content class="sale-form-content">
+    <!-- Trường Bất Động Sản -->
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Bất Động Sản</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="listing"
+          [matAutocomplete]="listingAuto"
+          placeholder="Nhập loại bất động sản (nhà, căn hộ, đất, thương mại)"
+          required
+        />
+        <mat-autocomplete
+          #listingAuto="matAutocomplete"
+          [displayWith]="displayListing"
+        >
+          <!-- Chỉ báo đang tìm kiếm -->
+          <mat-option *ngIf="listingLoading" disabled>
+            <mat-spinner diameter="20"></mat-spinner> Đang tìm kiếm...
+          </mat-option>
+
+          <!-- Kết quả với định dạng mới -->
+          <mat-option
+            *ngFor="let listing of filteredListings | async"
+            [value]="listing"
+          >
+            {{ listing.title }} ({{ listing.address }}, {{ listing.city }},
+            {{ listing.state }})
+          </mat-option>
+
+          <!-- Không có kết quả -->
+          <mat-option
+            *ngIf="(filteredListings | async)?.length === 0 && !listingLoading"
+            disabled
+          >
+            Không tìm thấy kết quả
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint
+          >Nhập loại bất động sản (nhà, căn hộ, đất, thương mại)</mat-hint
+        >
+        <mat-error *ngIf="saleForm.get('listing')?.hasError('required')">
+          Bất động sản là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Trường Người Mua -->
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Người Mua</mat-label>
+        <input
+          type="text"
+          matInput
+          formControlName="buyer"
+          [matAutocomplete]="buyerAuto"
+          placeholder="Nhập để tìm kiếm người mua"
+          required
+        />
+        <mat-autocomplete
+          #buyerAuto="matAutocomplete"
+          [displayWith]="displayUser"
+        >
+          <!-- Đang tìm kiếm người mua -->
+          <mat-option *ngIf="buyerLoading" disabled>
+            <mat-spinner diameter="20"></mat-spinner> Đang tìm kiếm...
+          </mat-option>
+
+          <mat-option
+            *ngFor="let user of filteredBuyers | async"
+            [value]="user"
+          >
+            {{ user.fullName }} ({{ user.email }})
+          </mat-option>
+
+          <!-- Không có kết quả -->
+          <mat-option
+            *ngIf="(filteredBuyers | async)?.length === 0 && !buyerLoading"
+            disabled
+          >
+            Không tìm thấy kết quả
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint>Nhập ít nhất 2 ký tự để tìm kiếm</mat-hint>
+        <mat-error *ngIf="saleForm.get('buyer')?.hasError('required')">
+          Người mua là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Giá Bán</mat-label>
+        <input
+          type="number"
+          matInput
+          formControlName="salePrice"
+          min="0.01"
+          step="0.01"
+          required
+        />
+        <span matPrefix>$&nbsp;</span>
+        <mat-error *ngIf="saleForm.get('salePrice')?.hasError('required')">
+          Giá bán là bắt buộc
+        </mat-error>
+        <mat-error *ngIf="saleForm.get('salePrice')?.hasError('min')">
+          Giá bán phải lớn hơn không
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Hoa Hồng</mat-label>
+        <input
+          type="number"
+          matInput
+          formControlName="commission"
+          min="0"
+          step="0.01"
+          required
+        />
+        <span matPrefix>$&nbsp;</span>
+        <mat-error *ngIf="saleForm.get('commission')?.hasError('required')">
+          Hoa hồng là bắt buộc
+        </mat-error>
+        <mat-error *ngIf="saleForm.get('commission')?.hasError('min')">
+          Hoa hồng không được âm
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ngày Đóng Giao Dịch</mat-label>
+        <input
+          matInput
+          [matDatepicker]="closingDatePicker"
+          formControlName="closingDate"
+          placeholder="MM/DD/YYYY"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="closingDatePicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #closingDatePicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <!-- Chỉ hiển thị trường Trạng Thái khi chỉnh sửa, không khi tạo mới -->
+    <div class="form-row" *ngIf="!isNew">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Trạng Thái</mat-label>
+        <mat-select formControlName="status" required>
+          <mat-option
+            *ngFor="let status of saleStatuses"
+            [value]="status.value"
+          >
+            {{ status.label }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="saleForm.get('status')?.hasError('required')">
+          Trạng thái là bắt buộc
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ghi Chú</mat-label>
+        <textarea matInput formControlName="notes" rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" type="button">Hủy</button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="saleForm.invalid || loading"
+    >
+      <mat-spinner
+        *ngIf="loading"
+        diameter="20"
+        class="spinner-in-button"
+      ></mat-spinner>
+      <span *ngIf="!loading">{{ isNew ? "Tạo Mới" : "Cập Nhật" }}</span>
+    </button>
+  </mat-dialog-actions>
+</form>

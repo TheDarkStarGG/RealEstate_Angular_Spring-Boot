@@ -1,0 +1,320 @@
+<div class="admin-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Thanh bên -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Quản Trị</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/admin/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Tổng Quan</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/users"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>people</mat-icon>
+          <span>Người Dùng</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/realtors"
+          routerLinkActive="active-link"
+          class="active-link"
+        >
+          <mat-icon>badge</mat-icon>
+          <span>Môi Giới</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/listings"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Bất Động Sản</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Giao Dịch Mua</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Giao Dịch Thuê</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/payments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>credit_card</mat-icon>
+          <span>Thanh Toán</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/admin/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Nội dung chính -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>Quản Lý Môi Giới</h1>
+          <span class="toolbar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="exportMenu">
+            <mat-icon>save_alt</mat-icon>
+            Xuất
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item>Xuất ra PDF</button>
+            <button mat-menu-item>Xuất ra Excel</button>
+            <button mat-menu-item>In</button>
+          </mat-menu>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Phần đầu với thống kê -->
+        <div class="dashboard-header mat-elevation-z2">
+          <div class="header-title">
+            <h1 class="mat-headline-5">Quản Lý Môi Giới</h1>
+            <p class="mat-body-1">Quản lý tất cả môi giới trong một nơi</p>
+          </div>
+          <div class="stats-cards">
+            <mat-card class="stat-card">
+              <mat-card-content>
+                <div class="stat-value">{{ getTotalRealtors() }}</div>
+                <div class="stat-label">Tổng Số Môi Giới</div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <button
+            mat-raised-button
+            color="primary"
+            class="create-button"
+            (click)="createRealtor()"
+          >
+            <mat-icon>add</mat-icon> Tạo Môi Giới Mới
+          </button>
+        </div>
+
+        <!-- Nội dung chính -->
+        <mat-card class="listings-card mat-elevation-z1">
+          <mat-card-content>
+            <!-- Hàng bộ lọc và tìm kiếm -->
+            <div class="filters-row">
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Tìm kiếm môi giới</mat-label>
+                <input
+                  matInput
+                  (keyup)="applyFilter($event)"
+                  placeholder="Tìm theo tên, email hoặc số điện thoại"
+                  #input
+                />
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Hiển thị thông báo lỗi -->
+            <div *ngIf="errorMessage" class="error-message mat-elevation-z1">
+              <mat-icon>error</mat-icon>
+              <span>{{ errorMessage }}</span>
+              <button mat-icon-button (click)="dismissError()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <!-- Biểu tượng đang tải -->
+            <div *ngIf="loading" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+
+            <!-- Container bảng -->
+            <div class="table-container mat-elevation-z1" *ngIf="!loading">
+              <table mat-table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+                  <td mat-cell *matCellDef="let realtor">{{ realtor.id }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="fullName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Họ Tên
+                  </th>
+                  <td mat-cell *matCellDef="let realtor">
+                    {{ realtor.fullName }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Tên Đăng Nhập
+                  </th>
+                  <td mat-cell *matCellDef="let realtor">
+                    {{ realtor.username }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Email
+                  </th>
+                  <td mat-cell *matCellDef="let realtor">
+                    {{ realtor.email }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="phoneNumber">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Điện Thoại
+                  </th>
+                  <td mat-cell *matCellDef="let realtor">
+                    {{ realtor.phoneNumber || "N/A" }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Thao Tác</th>
+                  <td mat-cell *matCellDef="let realtor">
+                    <div
+                      class="action-buttons"
+                      *ngIf="deleteItemId !== realtor.id"
+                    >
+                      <button
+                        mat-icon-button
+                        color="primary"
+                        matTooltip="Xem Môi Giới"
+                        (click)="viewRealtor(realtor.id)"
+                      >
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        color="accent"
+                        matTooltip="Sửa Môi Giới"
+                        (click)="editRealtor(realtor.id)"
+                      >
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button
+                        mat-icon-button
+                        color="warn"
+                        matTooltip="Xóa Môi Giới"
+                        (click)="confirmDelete(realtor.id)"
+                      >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    <div
+                      class="delete-confirmation"
+                      *ngIf="deleteItemId === realtor.id"
+                    >
+                      <span class="confirm-text">Xóa?</span>
+                      <button
+                        mat-raised-button
+                        color="warn"
+                        [disabled]="deleteInProgress"
+                        (click)="deleteRealtor(realtor.id)"
+                      >
+                        <mat-spinner
+                          *ngIf="deleteInProgress"
+                          diameter="20"
+                        ></mat-spinner>
+                        <span *ngIf="!deleteInProgress">Có</span>
+                      </button>
+                      <button
+                        mat-button
+                        [disabled]="deleteInProgress"
+                        (click)="cancelDelete()"
+                      >
+                        Không
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="displayedColumns; sticky: true"
+                ></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: displayedColumns"
+                ></tr>
+
+                <!-- Hàng không có dữ liệu -->
+                <tr class="mat-row" *matNoDataRow>
+                  <td
+                    class="mat-cell no-data"
+                    [attr.colspan]="displayedColumns.length"
+                  >
+                    <div *ngIf="!loading && input.value">
+                      <mat-icon>search_off</mat-icon>
+                      <p>
+                        Không tìm thấy môi giới nào khớp với "{{ input.value }}"
+                      </p>
+                      <button
+                        mat-button
+                        color="primary"
+                        (click)="clearSearch()"
+                      >
+                        Xóa Tìm Kiếm
+                      </button>
+                    </div>
+                    <div *ngIf="!loading && !input.value">
+                      <mat-icon>badge</mat-icon>
+                      <p>Không tìm thấy môi giới nào</p>
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        (click)="createRealtor()"
+                      >
+                        <mat-icon>add</mat-icon> Tạo môi giới đầu tiên của bạn
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <!-- Phân trang -->
+            <mat-paginator
+              class="custom-paginator"
+              [pageSizeOptions]="[5, 10, 25, 50]"
+              [pageSize]="pageSize"
+              [pageIndex]="currentPage"
+              [length]="totalElements"
+              showFirstLastButtons
+              (page)="onPageChange($event)"
+              aria-label="Chọn trang của môi giới"
+            >
+            </mat-paginator>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

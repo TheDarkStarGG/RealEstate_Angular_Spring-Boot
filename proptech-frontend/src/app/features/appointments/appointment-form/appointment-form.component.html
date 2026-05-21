@@ -1,0 +1,171 @@
+<div class="appointment-form-container">
+  <h2 class="form-title">
+    {{ isEditMode ? "Chỉnh Sửa Lịch Hẹn" : "Đặt Lịch Xem Nhà" }}
+  </h2>
+
+  <form [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+    <div class="form-content" *ngIf="!isLoading">
+      <!-- Lựa chọn Bất động sản - Chỉ hiển thị nếu không được truyền từ component cha -->
+      <mat-form-field
+        appearance="outline"
+        class="full-width"
+        *ngIf="!listingId || appointmentForm.get('listingId')?.enabled"
+      >
+        <mat-label>Bất động sản</mat-label>
+        <mat-select
+          formControlName="listingId"
+          (selectionChange)="onListingChange()"
+        >
+          <mat-option *ngFor="let listing of listings" [value]="listing.id">
+            {{ listing.title }} - {{ listing.address }}, {{ listing.city }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="
+            appointmentForm.get('listingId')?.invalid &&
+            appointmentForm.get('listingId')?.touched
+          "
+        >
+          Vui lòng chọn một bất động sản
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Chi tiết Bất động sản đã chọn -->
+      <div class="listing-details" *ngIf="selectedListing">
+        <div class="property-card">
+          <div class="property-info">
+            <p class="price">
+              {{
+                selectedListing.price | currency : "USD" : "symbol" : "1.0-0"
+              }}
+            </p>
+            <p class="address">
+              {{ selectedListing.address }}, {{ selectedListing.city }},
+              {{ selectedListing.state }}
+            </p>
+            <p class="details">
+              {{ selectedListing.bedrooms }} phòng ngủ •
+              {{ selectedListing.bathrooms }} phòng tắm •
+              {{ selectedListing.area }} m²
+            </p>
+            <p class="realtor" *ngIf="selectedListing.realtor">
+              Môi giới: {{ selectedListing.realtor.fullName }} •
+              {{
+                selectedListing.realtor.phoneNumber ||
+                  selectedListing.realtor.email
+              }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chọn Ngày và Giờ -->
+      <div class="date-time-container">
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>Ngày</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="appointmentDate"
+            [min]="minDate"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error
+            *ngIf="
+              appointmentForm.get('appointmentDate')?.invalid &&
+              appointmentForm.get('appointmentDate')?.touched
+            "
+          >
+            Vui lòng chọn một ngày hợp lệ
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="time-field">
+          <mat-label>Giờ</mat-label>
+          <mat-select formControlName="appointmentTime">
+            <mat-option *ngFor="let time of timeOptions" [value]="time">
+              {{ time }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="
+              appointmentForm.get('appointmentTime')?.invalid &&
+              appointmentForm.get('appointmentTime')?.touched
+            "
+          >
+            Vui lòng chọn thời gian
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Thời lượng -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Thời lượng (phút)</mat-label>
+        <mat-select formControlName="durationMinutes">
+          <mat-option
+            *ngFor="let duration of durationOptions"
+            [value]="duration"
+          >
+            {{ duration }} phút
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="
+            appointmentForm.get('durationMinutes')?.invalid &&
+            appointmentForm.get('durationMinutes')?.touched
+          "
+        >
+          Vui lòng chọn thời lượng
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Ghi chú -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Ghi chú</mat-label>
+        <textarea
+          matInput
+          formControlName="notes"
+          rows="4"
+          placeholder="Nhập thông tin chi tiết hoặc yêu cầu bổ sung"
+        ></textarea>
+      </mat-form-field>
+
+      <!-- Thông tin của bạn -->
+      <div class="user-info-section" *ngIf="currentUser">
+        <h3>Thông tin của bạn</h3>
+        <div class="user-info">
+          <p><strong>Họ tên:</strong> {{ currentUser.fullName }}</p>
+          <p><strong>Email:</strong> {{ currentUser.email }}</p>
+          <p *ngIf="currentUser.phoneNumber">
+            <strong>Điện thoại:</strong> {{ currentUser.phoneNumber }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Các nút thao tác -->
+      <div class="form-actions">
+        <button mat-button type="button" (click)="onCancel()">Hủy</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="appointmentForm.invalid"
+        >
+          {{ isEditMode ? "Cập nhật lịch hẹn" : "Đặt lịch hẹn" }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Hiệu ứng đang tải -->
+    <div class="loading-container" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>
+        {{ isEditMode ? "Đang cập nhật lịch hẹn..." : "Đang tạo lịch hẹn..." }}
+      </p>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,200 @@
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-content mat-elevation-z0">
+    <div class="hero-text">
+      <h1 class="mat-display-2">Tìm Bất Động Sản Mơ Ước</h1>
+      <p class="mat-headline-5">
+        Khám phá bất động sản hoàn hảo với nền tảng tìm kiếm bất động sản hiện
+        đại của chúng tôi.
+      </p>
+      <div class="hero-buttons">
+        <a mat-raised-button color="primary" routerLink="/listings">
+          <mat-icon>search</mat-icon> Xem Danh Sách
+        </a>
+        <a
+          mat-stroked-button
+          class="white-button"
+          routerLink="/listings/search"
+        >
+          <mat-icon>tune</mat-icon> Tìm Kiếm Nâng Cao
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Properties Section -->
+<section class="featured-properties">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="mat-display-1">Bất Động Sản Nổi Bật</h2>
+      <p class="mat-subtitle-1">
+        Khám phá các lựa chọn bất động sản cao cấp được chọn lọc
+      </p>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <mat-grid-list
+      cols="3"
+      rowHeight="450px"
+      gutterSize="24px"
+      *ngIf="featuredListings.length > 0 && !loading"
+    >
+      <mat-grid-tile *ngFor="let listing of featuredListings">
+        <app-listing-card [listing]="listing"></app-listing-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <div
+      *ngIf="featuredListings.length === 0 && !loading"
+      class="no-properties"
+    >
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <mat-icon color="primary">info</mat-icon>
+          <span>Hiện tại không có bất động sản nổi bật.</span>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="view-all" *ngIf="featuredListings.length > 0">
+      <a mat-flat-button color="accent" routerLink="/listings">Xem Tất Cả</a>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-choose-us">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="mat-display-1">Tại Sao Chọn Chúng Tôi</h2>
+      <p class="mat-subtitle-1">
+        Trải nghiệm nền tảng công nghệ bất động sản tốt nhất
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <mat-card class="feature-card mat-elevation-z3">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>verified</mat-icon>
+          </div>
+          <h3 class="mat-h2">Bất Động Sản Được Xác Thực</h3>
+          <p>
+            Tất cả bất động sản đều được đội ngũ chuyên gia của chúng tôi xác
+            thực để đảm bảo bạn nhận được giá trị tốt nhất.
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card mat-elevation-z3">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>groups</mat-icon>
+          </div>
+          <h3 class="mat-h2">Môi Giới Chuyên Nghiệp</h3>
+          <p>
+            Các môi giới được chứng nhận của chúng tôi là chuyên gia trong khu
+            vực của họ và cung cấp dịch vụ cá nhân hóa.
+          </p>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="feature-card mat-elevation-z3">
+        <mat-card-content>
+          <div class="feature-icon">
+            <mat-icon>security</mat-icon>
+          </div>
+          <h3 class="mat-h2">Giao Dịch An Toàn</h3>
+          <p>
+            Thanh toán và thông tin cá nhân của bạn được bảo vệ với nền tảng an
+            toàn của chúng tôi.
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</section>
+
+<!-- Browse By Category Section -->
+<section class="browse-categories">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="mat-display-1">Tìm Kiếm Theo Danh Mục</h2>
+      <p class="mat-subtitle-1">Tìm bất động sản theo loại</p>
+    </div>
+
+    <div class="categories-grid">
+      <mat-card class="category-card" (click)="goToCategory('HOUSE', 'SALE')">
+        <img
+          mat-card-image
+          src="assets/images/category-house.jpg"
+          alt="Nhà ở"
+        />
+        <div class="category-overlay">
+          <mat-card-content>
+            <h3 class="mat-h2">Nhà Ở</h3>
+            <p>Tìm ngôi nhà mơ ước của bạn</p>
+            <button mat-stroked-button class="white-button">Khám Phá</button>
+          </mat-card-content>
+        </div>
+      </mat-card>
+
+      <mat-card
+        class="category-card"
+        (click)="goToCategory('APARTMENT', 'RENT')"
+      >
+        <img
+          mat-card-image
+          src="assets/images/category-apartment.jpg"
+          alt="Căn hộ"
+        />
+        <div class="category-overlay">
+          <mat-card-content>
+            <h3 class="mat-h2">Căn Hộ</h3>
+            <p>Khám phá căn hộ thoải mái</p>
+            <button mat-stroked-button class="white-button">Khám Phá</button>
+          </mat-card-content>
+        </div>
+      </mat-card>
+
+      <mat-card class="category-card" (click)="goToCategory('OFFICE', 'RENT')">
+        <img
+          mat-card-image
+          src="assets/images/category-office.jpg"
+          alt="Văn phòng"
+        />
+        <div class="category-overlay">
+          <mat-card-content>
+            <h3 class="mat-h2">Văn Phòng</h3>
+            <p>Không gian văn phòng cao cấp</p>
+            <button mat-stroked-button class="white-button">Khám Phá</button>
+          </mat-card-content>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-container">
+      <div class="cta-content">
+        <h2 class="mat-h1">Bạn Là Môi Giới Bất Động Sản?</h2>
+        <p class="mat-subtitle-1">
+          Tham gia nền tảng của chúng tôi và tiếp cận hàng nghìn khách hàng tiềm
+          năng
+        </p>
+      </div>
+      <div class="cta-button">
+        <a mat-raised-button color="accent" routerLink="/auth/register"
+          >Đăng Ký Ngay</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

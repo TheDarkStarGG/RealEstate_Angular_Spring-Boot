@@ -1,0 +1,69 @@
+<mat-card class="listing-card">
+  <div class="card-img-container">
+    <img
+      [src]="
+        listing.images && listing.images.length
+          ? listing.images[0]
+          : 'assets/images/property-placeholder.jpg'
+      "
+      [alt]="listing.title"
+    />
+    <div
+      class="listing-badge"
+      [ngClass]="{
+        'primary-badge': listing.listingType === 'SALE',
+        'success-badge': listing.listingType === 'RENT'
+      }"
+    >
+      {{ listing.listingType === "SALE" ? "Để Bán" : "Cho Thuê" }}
+    </div>
+  </div>
+
+  <mat-card-content>
+    <h2 class="property-title">{{ listing.title }}</h2>
+
+    <div class="location">
+      <mat-icon>location_on</mat-icon>
+      <div class="location-text">
+        <p class="address">{{ listing.address }}</p>
+        <p class="city-state" *ngIf="listing.city">
+          {{ listing.city }}, {{ listing.state }} {{ listing.zipCode }}
+        </p>
+      </div>
+    </div>
+
+    <h3 class="price">{{ listing.price | currency }}</h3>
+
+    <div class="property-features">
+      <div class="feature" *ngIf="listing.bedrooms">
+        <mat-icon>king_bed</mat-icon>
+        <span>{{ listing.bedrooms }} phòng ngủ</span>
+      </div>
+      <div class="feature" *ngIf="listing.bathrooms">
+        <mat-icon>bathroom</mat-icon>
+        <span>{{ listing.bathrooms }} phòng tắm</span>
+      </div>
+      <div class="feature" *ngIf="listing.area">
+        <mat-icon>square_foot</mat-icon>
+        <span>{{ listing.area }} m²</span>
+      </div>
+    </div>
+
+    <div class="property-type">
+      <mat-chip>{{ formatPropertyType(listing.propertyType) }}</mat-chip>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <div class="realtor-details">
+      <small>Đăng bởi: {{ listing.realtor.fullName }}</small>
+    </div>
+    <button
+      mat-flat-button
+      color="primary"
+      [routerLink]="['/listings', listing.id]"
+    >
+      Xem Chi Tiết
+    </button>
+  </mat-card-actions>
+</mat-card>

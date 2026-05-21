@@ -1,0 +1,399 @@
+<div class="dashboard-container">
+  <mat-sidenav-container class="sidenav-container">
+    <!-- Thanh bên -->
+    <mat-sidenav #sidenav mode="side" opened class="sidenav" fixedInViewport>
+      <div class="sidebar-header">
+        <h2 class="mat-h2">Bảng Điều Khiển Môi Giới</h2>
+      </div>
+
+      <mat-nav-list>
+        <a
+          mat-list-item
+          routerLink="/realtor/dashboard"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>dashboard</mat-icon>
+          <span>Bảng Điều Khiển</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/listings"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>house</mat-icon>
+          <span>Danh Sách Nhà Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/sales"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>paid</mat-icon>
+          <span>Doanh Số Bán Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/rentals"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>key</mat-icon>
+          <span>Cho Thuê Của Tôi</span>
+        </a>
+        <a
+          mat-list-item
+          routerLink="/realtor/appointments"
+          routerLinkActive="active-link"
+        >
+          <mat-icon>event</mat-icon>
+          <span>Lịch Hẹn</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Nội dung chính -->
+    <mat-sidenav-content class="sidenav-content">
+      <div class="toolbar-container">
+        <mat-toolbar color="primary" class="dashboard-toolbar">
+          <button mat-icon-button (click)="sidenav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1>Bảng Điều Khiển Môi Giới</h1>
+          <span class="toolbar-spacer"></span>
+          <button mat-button [matMenuTriggerFor]="timeMenu">
+            <mat-icon>calendar_today</mat-icon>
+            Tháng này
+          </button>
+          <mat-menu #timeMenu="matMenu">
+            <button mat-menu-item (click)="filterByTimeRange('day')">
+              Hôm nay
+            </button>
+            <button mat-menu-item (click)="filterByTimeRange('week')">
+              Tuần này
+            </button>
+            <button mat-menu-item (click)="filterByTimeRange('month')">
+              Tháng này
+            </button>
+            <button mat-menu-item (click)="filterByTimeRange('year')">
+              Năm nay
+            </button>
+          </mat-menu>
+          <button mat-button [matMenuTriggerFor]="exportMenu">
+            <mat-icon>save_alt</mat-icon>
+            Xuất
+          </button>
+          <mat-menu #exportMenu="matMenu">
+            <button mat-menu-item>Xuất ra PDF</button>
+            <button mat-menu-item>Xuất ra Excel</button>
+            <button mat-menu-item>In</button>
+          </mat-menu>
+        </mat-toolbar>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Thẻ Thống Kê -->
+        <div class="stats-grid">
+          <mat-card appearance="outlined" class="stats-card primary-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Danh Sách Của Tôi</p>
+                  <p class="stat-value">{{ stats.listings }}</p>
+                </div>
+                <mat-icon class="stat-icon">house</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card success-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Giao Dịch Hoàn Thành</p>
+                  <p class="stat-value">{{ stats.completedSales }}</p>
+                </div>
+                <mat-icon class="stat-icon">paid</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card info-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Cho Thuê Đang Hoạt Động</p>
+                  <p class="stat-value">{{ stats.activeRentals }}</p>
+                </div>
+                <mat-icon class="stat-icon">key</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="stats-card warning-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-info">
+                  <p class="stat-label">Lịch Hẹn Sắp Tới</p>
+                  <p class="stat-value">{{ stats.upcomingAppointments }}</p>
+                </div>
+                <mat-icon class="stat-icon">event</mat-icon>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Hàng Biểu Đồ -->
+        <div class="charts-container">
+          <mat-card appearance="outlined" class="chart-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>trending_up</mat-icon>
+                  <span>Hiệu Suất Bán Hàng Theo Tháng</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <canvas id="salesPerformanceChart" height="300"></canvas>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="chart-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>pie_chart</mat-icon>
+                  <span>Danh Sách Của Tôi Theo Loại</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="chart-content">
+              <canvas id="listingTypeChart" height="250"></canvas>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Danh Sách Gần Đây & Lịch Hẹn Sắp Tới -->
+        <div class="bottom-container">
+          <mat-card appearance="outlined" class="recent-listings-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>house</mat-icon>
+                  <span>Danh Sách Gần Đây</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="loading-container" *ngIf="isLoadingListings">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+
+              <div
+                class="recent-listings"
+                *ngIf="!isLoadingListings && recentListings.length > 0"
+              >
+                <table
+                  mat-table
+                  [dataSource]="recentListings"
+                  class="recent-listings-table"
+                >
+                  <!-- Cột Tiêu Đề -->
+                  <ng-container matColumnDef="title">
+                    <th mat-header-cell *matHeaderCellDef>Bất Động Sản</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <div class="listing-info">
+                        <span class="listing-title">{{ listing.title }}</span>
+                        <span class="listing-address"
+                          >{{ listing.address }}, {{ listing.city }}</span
+                        >
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Giá -->
+                  <ng-container matColumnDef="price">
+                    <th mat-header-cell *matHeaderCellDef>Giá</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <span class="listing-price">{{
+                        listing.price | currency
+                      }}</span>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Loại -->
+                  <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Loại</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <mat-chip
+                        [ngClass]="
+                          listing.listingType === 'SALE'
+                            ? 'sale-chip'
+                            : 'rent-chip'
+                        "
+                      >
+                        {{
+                          listing.listingType === "SALE" ? "BÁN" : "CHO THUÊ"
+                        }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <!-- Cột Trạng Thái -->
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Trạng Thái</th>
+                    <td mat-cell *matCellDef="let listing">
+                      <mat-chip
+                        [ngClass]="
+                          listing.active ? 'active-chip' : 'inactive-chip'
+                        "
+                      >
+                        {{
+                          listing.active ? "Đang Hoạt Động" : "Không Hoạt Động"
+                        }}
+                      </mat-chip>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="listingColumns"></tr>
+                  <tr
+                    mat-row
+                    *matRowDef="let row; columns: listingColumns"
+                    (click)="viewListing(row.id)"
+                  ></tr>
+                </table>
+
+                <div class="view-all-link">
+                  <a mat-button color="primary" routerLink="/realtor/listings"
+                    >Xem Tất Cả Danh Sách</a
+                  >
+                </div>
+              </div>
+
+              <div
+                class="empty-state"
+                *ngIf="!isLoadingListings && recentListings.length === 0"
+              >
+                <mat-icon>house</mat-icon>
+                <p>Bạn chưa có danh sách bất động sản nào</p>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  routerLink="/listings/create"
+                >
+                  <mat-icon>add</mat-icon> Tạo Danh Sách Mới
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card appearance="outlined" class="upcoming-appointments-card">
+            <mat-card-header>
+              <mat-card-title>
+                <div class="card-header-content">
+                  <mat-icon>event</mat-icon>
+                  <span>Lịch Hẹn Sắp Tới</span>
+                </div>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="loading-container" *ngIf="isLoadingAppointments">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+
+              <div
+                class="appointments-list"
+                *ngIf="
+                  !isLoadingAppointments && upcomingAppointments.length > 0
+                "
+              >
+                <div
+                  class="appointment-item"
+                  *ngFor="let appointment of upcomingAppointments"
+                >
+                  <div class="appointment-date">
+                    <div class="date-box">
+                      <span class="month">{{
+                        getMonthFromDate(appointment.appointmentDateTime)
+                      }}</span>
+                      <span class="day">{{
+                        getDayFromDate(appointment.appointmentDateTime)
+                      }}</span>
+                    </div>
+                    <span class="time">{{
+                      getTimeFromDate(appointment.appointmentDateTime)
+                    }}</span>
+                  </div>
+
+                  <div class="appointment-details">
+                    <h3 class="property-title">
+                      {{ appointment.listing?.title || "Xem Bất Động Sản" }}
+                    </h3>
+                    <p class="client-info">
+                      <mat-icon class="small-icon">person</mat-icon>
+                      {{ appointment.client?.fullName || "Khách Hàng" }}
+                    </p>
+                    <p class="location-info" *ngIf="appointment.listing">
+                      <mat-icon class="small-icon">location_on</mat-icon>
+                      {{ appointment.listing.address }},
+                      {{ appointment.listing.city }}
+                    </p>
+                    <div class="appointment-status">
+                      <mat-chip
+                        [ngClass]="'status-' + appointment.status.toLowerCase()"
+                      >
+                        {{
+                          appointment.status === "CONFIRMED"
+                            ? "ĐÃ XÁC NHẬN"
+                            : appointment.status === "REQUESTED"
+                            ? "ĐÃ YÊU CẦU"
+                            : appointment.status === "COMPLETED"
+                            ? "ĐÃ HOÀN THÀNH"
+                            : appointment.status === "CANCELLED"
+                            ? "ĐÃ HỦY"
+                            : appointment.status
+                        }}
+                      </mat-chip>
+                    </div>
+                  </div>
+
+                  <div class="appointment-actions">
+                    <button
+                      mat-icon-button
+                      color="primary"
+                      matTooltip="Xem Chi Tiết"
+                      (click)="viewAppointment(appointment.id)"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="view-all-link">
+                  <a
+                    mat-button
+                    color="primary"
+                    routerLink="/realtor/appointments"
+                    >Xem Tất Cả Lịch Hẹn</a
+                  >
+                </div>
+              </div>
+
+              <div
+                class="empty-state"
+                *ngIf="
+                  !isLoadingAppointments && upcomingAppointments.length === 0
+                "
+              >
+                <mat-icon>event_busy</mat-icon>
+                <p>Không có lịch hẹn sắp tới</p>
+                <p class="empty-subtitle">
+                  Lịch hẹn trong tương lai sẽ xuất hiện ở đây
+                </p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
